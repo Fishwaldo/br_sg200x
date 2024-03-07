@@ -23,7 +23,7 @@ jobs:
     steps:
     - name: install dependencies
       run: |
-        sudo apt-get install -y make gcc g++ unzip git bc python3 device-tree-compiler mtd-utils xz-utils file which sed binutils build-essential rsync findutils perl tar cpio 
+        sudo apt-get install -y make gcc g++ unzip git bc python3 device-tree-compiler mtd-utils xz-utils file sed binutils build-essential rsync findutils perl tar cpio 
     - name: Checkout Buildroot sources
       uses: actions/checkout@v3
       with:
