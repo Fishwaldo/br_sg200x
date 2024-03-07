@@ -1,0 +1,69 @@
+From 59992a8a4466a67c1a20779b5b411626397b51e9 Mon Sep 17 00:00:00 2001
+From: Justin Hammond <justin@dynam.ac>
+Date: Thu, 7 Mar 2024 12:43:40 +0800
+Subject: [PATCH] add cvi_jpeg command
+
+---
+ cmd/cvi_jpeg.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 cvi_jpeg.c
+
+diff --git a/cmd/cvi_jpeg.c b/cmd/cvi_jpeg.c
+new file mode 100644
+index 0000000000..6cfe1b98a7
+--- /dev/null
++++ b/cmd/cvi_jpeg.c
+@@ -0,0 +1,50 @@
++#include <stdlib.h>
++#include <common.h>
++#include <command.h>
++
++extern int jpeg_decoder(void *bs_addr, void *yuv_addr, int size);
++extern int get_jpeg_size(int *width_addr, int *height_addr);
++
++static int do_cvi_jpeg_dec(struct cmd_tbl *cmdtp, int flag, int argc, char * const argv[])
++{
++	char *bs_addr = NULL;
++	char *yuv_addr = NULL;
++	int size = 0;
++
++
++	if (argc != 4) {
++		printf("Usage:\n%s\n", cmdtp->usage);
++		return 1;
++	}
++
++	bs_addr = (char *)simple_strtol(argv[1], NULL, 16);
++
++	if (!bs_addr) {
++		printf("Usage:\n%s\n", cmdtp->usage);
++		return 1;
++	}
++
++	yuv_addr = (char *)simple_strtol(argv[2], NULL, 16);
++
++	if (!yuv_addr) {
++		printf("Usage:\n%s\n", cmdtp->usage);
++		return 1;
++	}
++
++	size = (int)simple_strtol(argv[3], NULL, 16);
++
++	if (!size) {
++		printf("Usage:\n%s\n", cmdtp->usage);
++		return 1;
++	}
++
++	printf("\nstart jpeg dec task!, bs_addr %p, yuv_addr %p, size %d\n", bs_addr, yuv_addr, size);
++
++	jpeg_decoder(bs_addr, yuv_addr, size);
++	get_jpeg_size((int *)(bs_addr + size - 8), (int *)(bs_addr + size - 4));
++
++	return CMD_RET_SUCCESS;
++}
++
++U_BOOT_CMD(cvi_jpeg_dec, 4, 0, do_cvi_jpeg_dec, "Jpeg decoder ", "\n"
++);
+-- 
+2.44.0
+

@@ -1,0 +1,967 @@
+From afc08b2050cc6c8e49b130b773845c507cc73ec7 Mon Sep 17 00:00:00 2001
+From: Justin Hammond <justin@dynam.ac>
+Date: Wed, 6 Mar 2024 21:18:31 +0800
+Subject: [PATCH] add panel drivers
+
+---
+ include/cvitek/cvi_panels/cvi_panels.h        |  45 ++++
+ .../cvi_panels/dsi_st7701_d300fpc9307a.h      | 162 +++++++++++++
+ .../cvi_panels/dsi_st7701_dxq5d0019b480854.h  | 190 +++++++++++++++
+ .../cvi_panels/dsi_st7701_hd228001c31.h       | 185 +++++++++++++++
+ .../cvi_panels/dsi_st7701_hd228001c31_alt0.h  | 224 ++++++++++++++++++
+ include/cvitek/cvi_panels/dsi_zct2133v1.h     |  77 ++++++
+ 6 files changed, 883 insertions(+)
+ create mode 100644 include/cvitek/cvi_panels/dsi_st7701_d300fpc9307a.h
+ create mode 100644 include/cvitek/cvi_panels/dsi_st7701_dxq5d0019b480854.h
+ create mode 100644 include/cvitek/cvi_panels/dsi_st7701_hd228001c31.h
+ create mode 100644 include/cvitek/cvi_panels/dsi_st7701_hd228001c31_alt0.h
+ create mode 100644 include/cvitek/cvi_panels/dsi_zct2133v1.h
+
+diff --git a/include/cvitek/cvi_panels/cvi_panels.h b/include/cvitek/cvi_panels/cvi_panels.h
+index d74bcd8c2b..23c436d7bf 100644
+--- a/include/cvitek/cvi_panels/cvi_panels.h
++++ b/include/cvitek/cvi_panels/cvi_panels.h
+@@ -78,6 +78,15 @@ static struct panel_desc_s panel_desc = {
+ 	.dsi_init_cmds = dsi_init_cmds_ota7290b_320x1280,
+ 	.dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_ota7290b_320x1280)
+ };
++#elif defined(MIPI_PANEL_ST7701_D300FPC9307A)
++#include "dsi_st7701_d300fpc9307a.h"
++static struct panel_desc_s panel_desc = {
++        .panel_name = "ST7701-480x854",
++        .dev_cfg = &dev_cfg_st7701_480x854,
++        .hs_timing_cfg = &hs_timing_cfg_st7701_480x854,
++        .dsi_init_cmds = dsi_init_cmds_st7701_480x854,
++        .dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_st7701_480x854)
++};
+ #elif defined(MIPI_PANEL_OTA7290B_1920)
+ #include "dsi_ota7290b_1920.h"
+ static struct panel_desc_s panel_desc = {
+@@ -96,6 +105,15 @@ static struct panel_desc_s panel_desc = {
+ 	.dsi_init_cmds = dsi_init_cmds_icn9707_480x1920,
+ 	.dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_icn9707_480x1920)
+ };
++#elif defined(MIPI_PANEL_ST7701_DXQ5D0019B480854)
++#include "dsi_st7701_dxq5d0019b480854.h"
++static struct panel_desc_s panel_desc = {
++        .panel_name = "ST7701-480x854dxq",
++        .dev_cfg = &dev_cfg_st7701_480x854dxq,
++        .hs_timing_cfg = &hs_timing_cfg_st7701_480x854dxq,
++        .dsi_init_cmds = dsi_init_cmds_st7701_480x854dxq,
++        .dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_st7701_480x854dxq)
++};
+ #elif defined(MIPI_PANEL_3AML069LP01G)
+ #include "dsi_3aml069lp01g.h"
+ static struct panel_desc_s panel_desc = {
+@@ -114,6 +132,24 @@ static struct panel_desc_s panel_desc = {
+ 	.dsi_init_cmds = dsi_init_cmds_st7701_480x800,
+ 	.dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_st7701_480x800)
+ };
++#elif defined(MIPI_PANEL_ST7701_HD228001C31)
++#include "dsi_st7701_hd228001c31.h"
++static struct panel_desc_s panel_desc = {
++        .panel_name = "ST7701-368x552",
++        .dev_cfg = &dev_cfg_st7701_368x552,
++        .hs_timing_cfg = &hs_timing_cfg_st7701_368x552,
++        .dsi_init_cmds = dsi_init_cmds_st7701_368x552,
++        .dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_st7701_368x552)
++};
++#elif defined(MIPI_PANEL_ST7701_HD228001C31)
++#include "dsi_st7701_hd228001c31_alt0.h"
++static struct panel_desc_s panel_desc = {
++        .panel_name = "ST7701-368x552-alt0",
++        .dev_cfg = &dev_cfg_st7701_368x552_alt0,
++        .hs_timing_cfg = &hs_timing_cfg_st7701_368x552_alt0,
++        .dsi_init_cmds = dsi_init_cmds_st7701_368x552_alt0,
++        .dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_st7701_368x552_alt0)
++};
+ #elif defined(MIPI_PANEL_ST7785M)
+ #include "dsi_st7785m.h"
+ static struct panel_desc_s panel_desc = {
+@@ -123,6 +159,15 @@ static struct panel_desc_s panel_desc = {
+ 	.dsi_init_cmds = dsi_init_cmds_st7785m_240x320,
+ 	.dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_st7785m_240x320)
+ };
++#elif defined(MIPI_PANEL_ZCT2133V1)
++#include "dsi_zct2133v1.h"
++static struct panel_desc_s panel_desc = {
++        .panel_name = "zct2133v1-800x1280",
++        .dev_cfg = &dev_cfg_zct2133v1_800x1280,
++        .hs_timing_cfg = &hs_timing_cfg_zct2133v1_800x1280,
++        .dsi_init_cmds = dsi_init_cmds_zct2133v1_800x1280,
++        .dsi_init_cmds_size = ARRAY_SIZE(dsi_init_cmds_zct2133v1_800x1280)
++};
+ #elif defined(I80_PANEL_ST7789V)
+ #include "i80_st7789v.h"
+ static struct panel_desc_s panel_desc = {
+diff --git a/include/cvitek/cvi_panels/dsi_st7701_d300fpc9307a.h b/include/cvitek/cvi_panels/dsi_st7701_d300fpc9307a.h
+new file mode 100644
+index 0000000000..059f52a57f
+--- /dev/null
++++ b/include/cvitek/cvi_panels/dsi_st7701_d300fpc9307a.h
+@@ -0,0 +1,162 @@
++#ifndef _MIPI_TX_PARAM_ST_7701_D300FPC9307A_H_
++#define _MIPI_TX_PARAM_ST_7701_D300FPC9307A_H_
++
++#ifndef __UBOOT__
++#include <linux/vo_mipi_tx.h>
++#include <linux/cvi_comm_mipi_tx.h>
++#else
++#include <cvi_mipi.h>
++#endif
++
++#define ST7701_D300FPC9307A_VACT	854
++#define ST7701_D300FPC9307A_VSA		10
++#define ST7701_D300FPC9307A_VBP		12
++#define ST7701_D300FPC9307A_VFP		3
++
++#define ST7701_D300FPC9307A_HACT	480
++#define ST7701_D300FPC9307A_HSA		32
++#define ST7701_D300FPC9307A_HBP		80
++#define ST7701_D300FPC9307A_HFP		48
++
++/*
++#define ST7701_D300FPC9307A_VACT        854
++#define ST7701_D300FPC9307A_VSA         10
++#define ST7701_D300FPC9307A_VBP         42
++#define ST7701_D300FPC9307A_VFP         4
++
++#define ST7701_D300FPC9307A_HACT        480
++#define ST7701_D300FPC9307A_HSA         2
++#define ST7701_D300FPC9307A_HBP         43
++#define ST7701_D300FPC9307A_HFP         8
++*/
++
++#define D300_PIXEL_CLK(x) ((x##_VACT + x##_VSA + x##_VBP + x##_VFP) \
++	* (x##_HACT + x##_HSA + x##_HBP + x##_HFP) * 60 / 1000)
++
++struct combo_dev_cfg_s dev_cfg_st7701_480x854 = {
++	.devno = 0,
++	.lane_id = {MIPI_TX_LANE_0, MIPI_TX_LANE_CLK, MIPI_TX_LANE_1, -1, -1},
++	.lane_pn_swap = {false, false, false, false, false},
++	.output_mode = OUTPUT_MODE_DSI_VIDEO,
++	.video_mode = BURST_MODE,
++	.output_format = OUT_FORMAT_RGB_24_BIT,
++	.sync_info = {
++		.vid_hsa_pixels = ST7701_D300FPC9307A_HSA,
++		.vid_hbp_pixels = ST7701_D300FPC9307A_HBP,
++		.vid_hfp_pixels = ST7701_D300FPC9307A_HFP,
++		.vid_hline_pixels = ST7701_D300FPC9307A_HACT,
++		.vid_vsa_lines = ST7701_D300FPC9307A_VSA,
++		.vid_vbp_lines = ST7701_D300FPC9307A_VBP,
++		.vid_vfp_lines = ST7701_D300FPC9307A_VFP,
++		.vid_active_lines = ST7701_D300FPC9307A_VACT,
++		.vid_vsa_pos_polarity = true,
++		.vid_hsa_pos_polarity = false,
++	},
++	.pixel_clk = D300_PIXEL_CLK(ST7701_D300FPC9307A),
++};
++
++const struct hs_settle_s hs_timing_cfg_st7701_480x854 = { .prepare = 6, .zero = 32, .trail = 1 };
++
++#ifndef CVI_U8
++#define CVI_U8 unsigned char
++#endif
++
++static CVI_U8 data_st7701_d300fpc9307a_0[] = {0x11, 0x00 }; // turn off sleep mode
++        //{REGFLAG_DELAY, 60, {} }, 
++static CVI_U8 data_st7701_d300fpc9307a_1[] = {0xff, 0x77, 0x01, 0x00, 0x00, 0x13 };
++static CVI_U8 data_st7701_d300fpc9307a_2[] = {0xef, 0x08 };
++static CVI_U8 data_st7701_d300fpc9307a_3[] = {0xff, 0x77, 0x01, 0x00, 0x00, 0x10 };
++static CVI_U8 data_st7701_d300fpc9307a_4[] = {0xc0, 0xe9, 0x03 }; // display line setting, set to 854
++static CVI_U8 data_st7701_d300fpc9307a_5[] = {0xc1, 0x10, 0x0c }; // vbp
++static CVI_U8 data_st7701_d300fpc9307a_6[] = {0xc2, 0x20, 0x0a }; // 
++static CVI_U8 data_st7701_d300fpc9307a_7[] = {0xcc, 0x10 };
++static CVI_U8 data_st7701_d300fpc9307a_8[] = {0xb0, 0x00, 0x23, 0x2a, 0x0a, 0x0e, 0x03, 0x12, 0x06,
++						0x06, 0x2a, 0x00, 0x10, 0x0f, 0x2d, 0x34, 0x1f };
++static CVI_U8 data_st7701_d300fpc9307a_9[] = {0xb1, 0x00, 0x24, 0x2b, 0x0f, 0x12, 0x07, 0x15, 0x0a,
++						0x0a, 0x2b, 0x08, 0x13, 0x10, 0x2d, 0x33, 0x1f };
++static CVI_U8 data_st7701_d300fpc9307a_10[] = {0xff, 0x77, 0x01, 0x00, 0x00, 0x11 };
++static CVI_U8 data_st7701_d300fpc9307a_11[] = {0xb0, 0x4d };
++static CVI_U8 data_st7701_d300fpc9307a_12[] = {0xb1, 0x48 };
++static CVI_U8 data_st7701_d300fpc9307a_13[] = {0xb2, 0x84 };
++static CVI_U8 data_st7701_d300fpc9307a_14[] = {0xb3, 0x80 };
++static CVI_U8 data_st7701_d300fpc9307a_15[] = {0xb5, 0x45 };
++static CVI_U8 data_st7701_d300fpc9307a_16[] = {0xb7, 0x85 };
++static CVI_U8 data_st7701_d300fpc9307a_17[] = {0xb8, 0x33 };
++static CVI_U8 data_st7701_d300fpc9307a_18[] = {0xc1, 0x78 };
++static CVI_U8 data_st7701_d300fpc9307a_19[] = {0xc2, 0x78 };
++//{REGFLAG_DELAY, 50, {} },
++static CVI_U8 data_st7701_d300fpc9307a_20[] = {0xd0, 0x88 };
++static CVI_U8 data_st7701_d300fpc9307a_21[] = {0xe0, 0x00, 0x00, 0x02 };
++static CVI_U8 data_st7701_d300fpc9307a_22[] = {0xe1, 0x06, 0xa0, 0x08, 0xa0, 0x05, 0xa0, 0x07, 0xa0, 0x00, 0x44, 0x44 };
++static CVI_U8 data_st7701_d300fpc9307a_23[] = {0xe2, 0x30, 0x30, 0x44, 0x44, 0x6e, 0xa0, 0x00, 0x00, 0x6e, 0xa0, 0x00, 0x00 };
++static CVI_U8 data_st7701_d300fpc9307a_24[] = {0xe3, 0x00, 0x00, 0x33, 0x33 };
++static CVI_U8 data_st7701_d300fpc9307a_25[] = {0xe4, 0x44, 0x44 };
++static CVI_U8 data_st7701_d300fpc9307a_26[] = {0xe5, 0x0D, 0x69, 0x0a, 0xa0, 0x0f, 0x6b, 0x0a, 0xa0, 0x09,
++						0x65, 0x0a, 0xa0, 0x0b, 0x67, 0x0a, 0xa0 };
++static CVI_U8 data_st7701_d300fpc9307a_27[] = {0xe6, 0x00, 0x00, 0x33, 0x33 };
++static CVI_U8 data_st7701_d300fpc9307a_28[] = {0xe7, 0x44, 0x44 };
++static CVI_U8 data_st7701_d300fpc9307a_29[] = {0xe8, 0x0C, 0x68, 0x0a, 0xa0, 0x0e, 0x6a, 0x0a, 0xa0, 0x08, 0x64,
++						0x0a, 0xa0, 0x0a, 0x66, 0x0a, 0xa0 };
++static CVI_U8 data_st7701_d300fpc9307a_30[] = {0xe9, 0x36, 0x00 };
++static CVI_U8 data_st7701_d300fpc9307a_31[] = {0xeb, 0x00, 0x01, 0xe4, 0xe4, 0x44, 0x88, 0x40 };
++//{0xec, 0x3c, 0x01 },
++static CVI_U8 data_st7701_d300fpc9307a_32[] = {0xed, 0xff, 0x45, 0x67, 0xfa, 0x01, 0x2b, 0xcf, 0xff, 0xff, 0xfc, 0xb2,
++						0x10, 0xaf, 0x76, 0x54, 0xff };
++static CVI_U8 data_st7701_d300fpc9307a_33[] = {0xef, 0x10, 0x0d, 0x04, 0x08, 0x3f, 0x1f };
++static CVI_U8 data_st7701_d300fpc9307a_34[] = {0x11 };
++//{0xff, 0x77, 0x01, 0x00, 0x00, 0x00 },
++//{REGFLAG_DELAY, 50, {} },
++static CVI_U8 data_st7701_d300fpc9307a_35[] = {0x3a, 0x55 };
++static CVI_U8 data_st7701_d300fpc9307a_36[] = {0x29, 0x00 };
++//{REGFLAG_END_OF_TABLE, 0x00, {} }
++
++
++// len == 1 , type 0x05
++// len == 2 , type 0x15 or type 23
++// len >= 3 , type 0x29 or type 0x39
++#define TYPE1 0x05
++#define TYPE2 0x15
++#define TYPE3 0x29
++const struct dsc_instr dsi_init_cmds_st7701_480x854[] = {
++	{.delay = 60, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_0 },
++	{.delay = 0, .data_type = TYPE3, .size = 6, .data = data_st7701_d300fpc9307a_1 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_2 },
++	{.delay = 0, .data_type = TYPE3, .size = 6, .data = data_st7701_d300fpc9307a_3 },
++	{.delay = 0, .data_type = TYPE3, .size = 3, .data = data_st7701_d300fpc9307a_4 },
++	{.delay = 0, .data_type = TYPE3, .size = 3, .data = data_st7701_d300fpc9307a_5 },
++	{.delay = 0, .data_type = TYPE3, .size = 3, .data = data_st7701_d300fpc9307a_6 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_7 },
++	{.delay = 0, .data_type = TYPE3, .size = 17, .data = data_st7701_d300fpc9307a_8 },
++	{.delay = 0, .data_type = TYPE3, .size = 17, .data = data_st7701_d300fpc9307a_9 },
++	{.delay = 0, .data_type = TYPE3, .size = 6, .data = data_st7701_d300fpc9307a_10 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_11 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_12 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_13 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_14 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_15 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_16 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_17 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_18 },
++	{.delay = 50, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_19 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_20 },
++	{.delay = 0, .data_type = TYPE3, .size = 4, .data = data_st7701_d300fpc9307a_21 },
++	{.delay = 0, .data_type = TYPE3, .size = 12, .data = data_st7701_d300fpc9307a_22 },
++	{.delay = 0, .data_type = TYPE3, .size = 13, .data = data_st7701_d300fpc9307a_23 },
++	{.delay = 0, .data_type = TYPE3, .size = 5, .data = data_st7701_d300fpc9307a_24 },
++	{.delay = 0, .data_type = TYPE3, .size = 3, .data = data_st7701_d300fpc9307a_25 },
++	{.delay = 0, .data_type = TYPE3, .size = 17, .data = data_st7701_d300fpc9307a_26 },
++	{.delay = 0, .data_type = TYPE3, .size = 5, .data = data_st7701_d300fpc9307a_27 },
++	{.delay = 0, .data_type = TYPE3, .size = 3, .data = data_st7701_d300fpc9307a_28 },
++	{.delay = 0, .data_type = TYPE3, .size = 17, .data = data_st7701_d300fpc9307a_29 },
++	{.delay = 0, .data_type = TYPE3, .size = 3, .data = data_st7701_d300fpc9307a_30 },
++	{.delay = 0, .data_type = TYPE3, .size = 8, .data = data_st7701_d300fpc9307a_31 },
++	{.delay = 0, .data_type = TYPE3, .size = 17, .data = data_st7701_d300fpc9307a_32 },
++	{.delay = 50, .data_type = TYPE3, .size = 7, .data = data_st7701_d300fpc9307a_33 },
++	{.delay = 0, .data_type = TYPE1, .size = 1, .data = data_st7701_d300fpc9307a_34 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_35 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_st7701_d300fpc9307a_36 },
++};
++
++#else
++#error "MIPI_TX_PARAM multi-delcaration!!"
++#endif
+diff --git a/include/cvitek/cvi_panels/dsi_st7701_dxq5d0019b480854.h b/include/cvitek/cvi_panels/dsi_st7701_dxq5d0019b480854.h
+new file mode 100644
+index 0000000000..58c3194a69
+--- /dev/null
++++ b/include/cvitek/cvi_panels/dsi_st7701_dxq5d0019b480854.h
+@@ -0,0 +1,190 @@
++#ifndef _MIPI_TX_PARAM_ST_7701_DXQ5D0019B480854_H_
++#define _MIPI_TX_PARAM_ST_7701_DXQ5D0019B480854_H_
++
++#ifndef __UBOOT__
++#include <linux/vo_mipi_tx.h>
++#include <linux/cvi_comm_mipi_tx.h>
++#else
++#include <cvi_mipi.h>
++#endif
++
++/*
++#define ST7701_DXQ5D0019B480854_VACT	854
++#define ST7701_DXQ5D0019B480854_VSA		2
++#define ST7701_DXQ5D0019B480854_VBP		20
++#define ST7701_DXQ5D0019B480854_VFP		20
++
++#define ST7701_DXQ5D0019B480854_HACT	480
++#define ST7701_DXQ5D0019B480854_HSA		10
++#define ST7701_DXQ5D0019B480854_HBP		40
++#define ST7701_DXQ5D0019B480854_HFP		40
++*/
++
++#define ST7701_DXQ5D0019B480854_VACT	854
++#define ST7701_DXQ5D0019B480854_VSA		10
++#define ST7701_DXQ5D0019B480854_VBP		20
++#define ST7701_DXQ5D0019B480854_VFP		3
++
++#define ST7701_DXQ5D0019B480854_HACT	480
++#define ST7701_DXQ5D0019B480854_HSA		48
++#define ST7701_DXQ5D0019B480854_HBP		72
++#define ST7701_DXQ5D0019B480854_HFP		24
++
++#define DXQ_PIXEL_CLK(x) ((x##_VACT + x##_VSA + x##_VBP + x##_VFP) \
++	* (x##_HACT + x##_HSA + x##_HBP + x##_HFP) * 60 / 1000)
++
++struct combo_dev_cfg_s dev_cfg_st7701_480x854dxq = {
++	.devno = 0,
++	.lane_id = {MIPI_TX_LANE_0, MIPI_TX_LANE_CLK, MIPI_TX_LANE_1, -1, -1},
++	.lane_pn_swap = {false, false, false, false, false},
++	.output_mode = OUTPUT_MODE_DSI_VIDEO,
++	.video_mode = BURST_MODE,
++	.output_format = OUT_FORMAT_RGB_24_BIT,
++	.sync_info = {
++		.vid_hsa_pixels = ST7701_DXQ5D0019B480854_HSA,
++		.vid_hbp_pixels = ST7701_DXQ5D0019B480854_HBP,
++		.vid_hfp_pixels = ST7701_DXQ5D0019B480854_HFP,
++		.vid_hline_pixels = ST7701_DXQ5D0019B480854_HACT,
++		.vid_vsa_lines = ST7701_DXQ5D0019B480854_VSA,
++		.vid_vbp_lines = ST7701_DXQ5D0019B480854_VBP,
++		.vid_vfp_lines = ST7701_DXQ5D0019B480854_VFP,
++		.vid_active_lines = ST7701_DXQ5D0019B480854_VACT,
++		.vid_vsa_pos_polarity = true,
++		.vid_hsa_pos_polarity = false,
++	},
++	.pixel_clk = DXQ_PIXEL_CLK(ST7701_DXQ5D0019B480854),
++};
++
++const struct hs_settle_s hs_timing_cfg_st7701_480x854dxq = { .prepare = 6, .zero = 32, .trail = 1 };
++
++#ifndef CVI_U8
++#define CVI_U8 unsigned char
++#endif
++
++static CVI_U8 data_st7701_dxq5d0019b480854_0[] = {0x11, 0x00 }; // turn off sleep mode
++//{REGFLAG_DELAY, 60, {} },
++static CVI_U8 data_st7701_dxq5d0019b480854_1[] = {0xff,0x77,0x01,0x00,0x00,0x10};
++static CVI_U8 data_st7701_dxq5d0019b480854_2[] = {0xC0,0xE9,0x03};
++static CVI_U8 data_st7701_dxq5d0019b480854_3[] = {0xC1,0x08,0x02};
++static CVI_U8 data_st7701_dxq5d0019b480854_4[] = {0xC2,0x31,0x08};
++static CVI_U8 data_st7701_dxq5d0019b480854_5[] = {0xCC,0x10};
++static CVI_U8 data_st7701_dxq5d0019b480854_6[] = {0xB0,0x00,0x0B,0x10,0x0D,0x11,0x06,0x01,0x08,0x08,0x1D,0x04,0x10,0x10,0x27,0x30,0x19};
++static CVI_U8 data_st7701_dxq5d0019b480854_7[] = {0xB1,0x00,0x0B,0x14,0x0C,0x11,0x05,0x03,0x08,0x08,0x20,0x04,0x13,0x10,0x28,0x30,0x19};
++//------------------------------------End Gamma etting------------------------------------------//
++//-------------------------------End Display Control setting------------------------------------//
++//-------------------------------------Bank0 Setting End-----------------------------------------//
++//---------------------------------------Bank1 setting----------------------------------------------//
++//---------------------------- Power Control Registers Initial ---------------------------------//
++static CVI_U8 data_st7701_dxq5d0019b480854_8[] = {0xff,0x77,0x01,0x00,0x00,0x11};
++static CVI_U8 data_st7701_dxq5d0019b480854_9[] = {0xB0,0x35};
++//---------------------------------------Vcom setting----------------------------------------------//
++static CVI_U8 data_st7701_dxq5d0019b480854_10[] = {0xB1,0x38};
++//-----------------------------------End Vcom Setting---------------------------------------------//
++static CVI_U8 data_st7701_dxq5d0019b480854_11[] = {0xB2,0x02};
++static CVI_U8 data_st7701_dxq5d0019b480854_12[] = {0xB3,0x80};
++static CVI_U8 data_st7701_dxq5d0019b480854_13[] = {0xB5,0x4E};
++static CVI_U8 data_st7701_dxq5d0019b480854_14[] = {0xB7,0x85};
++static CVI_U8 data_st7701_dxq5d0019b480854_15[] = {0xB8,0x20};
++static CVI_U8 data_st7701_dxq5d0019b480854_16[] = {0xB9,0x10};
++static CVI_U8 data_st7701_dxq5d0019b480854_17[] = {0xC1,0x78};
++static CVI_U8 data_st7701_dxq5d0019b480854_18[] = {0xC2,0x78};
++static CVI_U8 data_st7701_dxq5d0019b480854_19[] = {0xD0,0x88};
++//-----------------------------End Power Control Registers Initial ----------------------------//
++//Delayms (100);
++//-------------------------------------GIP Setting-------------------------------------------------//
++static CVI_U8 data_st7701_dxq5d0019b480854_20[] = {0xE0,0x00,0x00,0x02};
++static CVI_U8 data_st7701_dxq5d0019b480854_21[] = {0xE1,0x05,0x00,0x00,0x00,0x04,0x00,0x00,0x00,0x00,0x20,0x20};
++static CVI_U8 data_st7701_dxq5d0019b480854_22[] = {0xE2,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_23[] = {0xE3,0x00,0x00,0x33,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_24[] = {0xE4,0x22,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_25[] = {0xE5,0x07,0x34,0xA0,0xA0,0x05,0x34,0xA0,0xA0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_26[] = {0xE6,0x00,0x00,0x33,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_27[] = {0xE7,0x22,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_28[] = {0xE8,0x06,0x34,0xA0,0xA0,0x04,0x34,0xA0,0xA0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_29[] = {0xEB,0x02,0x00,0x10,0x10,0x00,0x00,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_30[] = {0xEC,0x02,0x00};
++static CVI_U8 data_st7701_dxq5d0019b480854_31[] = {0xED,0xAA,0x54,0x0B,0xBF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFB,0xB0,0x45,0xAA};
++//-----------------------------------------End GIP Setting-----------------------------------------//
++//--------------------------- Power Control Registers Initial End------------------------------//
++//-------------------------------------Bank1 Setting------------------------------------------------//
++//-----------------------------------//
++//	Example 1: Read - Direct Procedure
++//-----------------------------------//
++static CVI_U8 data_st7701_dxq5d0019b480854_32[] = {0xFF,0x77,0x01,0x00,0x00,0x11};
++//DCS_Long_Read_NP(0xA1,3,BUFFER+0);
++//DCS_Long_Read_NP(0xDA,1,BUFFER+0);
++//DCS_Long_Read_NP(0xDB,1,BUFFER+1);
++//DCS_Long_Read_NP(0xDC,1,BUFFER+2);
++
++//DCS_Short_Write_1P(0x00);
++static CVI_U8 data_st7701_dxq5d0019b480854_33[] = {0x00};
++//Delay(500);
++//bist模式
++//彩条
++//static CVI_U8 data_st7701_dxq5d0019b480854_34[] = {0xFF,0x77,0x01,0x00,0x00,0x12};
++//static CVI_U8 data_st7701_dxq5d0019b480854_35[] = {0xd1,0x81,0x10,0x03,0x03,0x08,0x01,0xA0,0x01,0xe0,0xB0,0x01,0xe0,0x03,0x20};
++//static CVI_U8 data_st7701_dxq5d0019b480854_36[] = {0xd2,0x08};///彩条
++//static CVI_U8 data_st7701_dxq5d0019b480854_37[] = {0xFF,0x77,0x01,0x00,0x00,0x10};
++//static CVI_U8 data_st7701_dxq5d0019b480854_38[] = {0xC2,0x31,0x08};
++//DCS_Short_Write_1P(0x29,0x00);
++static CVI_U8 data_st7701_dxq5d0019b480854_39[] = {0x29,0x00};
++//Delay(100);
++static CVI_U8 data_st7701_dxq5d0019b480854_40[] = {0x35,0x00};
++
++// len == 1 , type 0x05
++// len == 2 , type 0x15 or type 23
++// len >= 3 , type 0x29 or type 0x39
++#define TYPE1_DCS_SHORT_WRITE 0x05
++#define TYPE2_DCS_SHORT_WRITE 0x15
++#define TYPE3_DCS_LONG_WRITE 0x39
++#define TYPE3_GENERIC_LONG_WRITE 0x29
++const struct dsc_instr dsi_init_cmds_st7701_480x854dxq[] = {
++	{.delay = 60, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_0 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 6, .data = data_st7701_dxq5d0019b480854_1 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_2 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_3 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_4 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_5 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 17, .data = data_st7701_dxq5d0019b480854_6 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 17, .data = data_st7701_dxq5d0019b480854_7 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 6, .data = data_st7701_dxq5d0019b480854_8 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_9 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_10 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_11 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_12 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_13 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_14 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_15 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_16 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_17 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_18 },
++	{.delay = 100, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_19 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 4, .data = data_st7701_dxq5d0019b480854_20 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 12, .data = data_st7701_dxq5d0019b480854_21 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 14, .data = data_st7701_dxq5d0019b480854_22 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 5, .data = data_st7701_dxq5d0019b480854_23 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_24 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 17, .data = data_st7701_dxq5d0019b480854_25 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 5, .data = data_st7701_dxq5d0019b480854_26 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_27 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 17, .data = data_st7701_dxq5d0019b480854_28 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 8, .data = data_st7701_dxq5d0019b480854_29 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_30 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 17, .data = data_st7701_dxq5d0019b480854_31 },
++	{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 6, .data = data_st7701_dxq5d0019b480854_32 },
++	{.delay = 255, .data_type = TYPE1_DCS_SHORT_WRITE, .size = 1, .data = data_st7701_dxq5d0019b480854_33 },
++/* bist mode vvv */
++	//{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 6, .data = data_st7701_dxq5d0019b480854_34 },
++	//{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 15, .data = data_st7701_dxq5d0019b480854_35 },
++	//{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_36 },
++	//{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 6, .data = data_st7701_dxq5d0019b480854_37 },
++	//{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_38 },
++	//{.delay = 0, .data_type = TYPE3_DCS_LONG_WRITE, .size = 3, .data = data_st7701_dxq5d0019b480854_38 },
++/* bist mode ^^^ */
++	{.delay = 100, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_39 },
++	{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_dxq5d0019b480854_40 },
++};
++
++#else
++#error "MIPI_TX_PARAM multi-delcaration!!"
++#endif
+diff --git a/include/cvitek/cvi_panels/dsi_st7701_hd228001c31.h b/include/cvitek/cvi_panels/dsi_st7701_hd228001c31.h
+new file mode 100644
+index 0000000000..cd70353db3
+--- /dev/null
++++ b/include/cvitek/cvi_panels/dsi_st7701_hd228001c31.h
+@@ -0,0 +1,185 @@
++#ifndef _MIPI_TX_PARAM_ST_7701_HD228001C31_H_
++#define _MIPI_TX_PARAM_ST_7701_HD228001C31_H_
++
++#ifndef __UBOOT__
++#include <linux/vo_mipi_tx.h>
++#include <linux/cvi_comm_mipi_tx.h>
++#else
++#include <cvi_mipi.h>
++#endif
++
++// vendor
++/*
++#define ST7701_HD228001C31_VACT	552
++#define ST7701_HD228001C31_VSA		2
++#define ST7701_HD228001C31_VBP		20
++#define ST7701_HD228001C31_VFP		20
++
++#define ST7701_HD228001C31_HACT		368
++#define ST7701_HD228001C31_HSA		8
++#define ST7701_HD228001C31_HBP		160
++#define ST7701_HD228001C31_HFP		160
++*/
++
++// calc 2
++#define ST7701_HD228001C31_VACT		552
++#define ST7701_HD228001C31_VSA		10
++#define ST7701_HD228001C31_VBP		20
++#define ST7701_HD228001C31_VFP		20
++
++#define ST7701_HD228001C31_HACT		368
++#define ST7701_HD228001C31_HSA		8
++#define ST7701_HD228001C31_HBP		160
++#define ST7701_HD228001C31_HFP		160
++
++
++
++
++// calc
++/*
++#define ST7701_HD228001C31_VACT	552
++#define ST7701_HD228001C31_VSA	10
++#define ST7701_HD228001C31_VBP	6
++#define ST7701_HD228001C31_VFP	3
++
++#define ST7701_HD228001C31_HACT	368
++#define ST7701_HD228001C31_HSA	32
++#define ST7701_HD228001C31_HBP	80
++#define ST7701_HD228001C31_HFP	48
++*/
++
++#define HD22_PIXEL_CLK(x) ((x##_VACT + x##_VSA + x##_VBP + x##_VFP) \
++	* (x##_HACT + x##_HSA + x##_HBP + x##_HFP) * 75 / 1000)
++
++struct combo_dev_cfg_s dev_cfg_st7701_368x552 = {
++	.devno = 0,
++	.lane_id = {MIPI_TX_LANE_0, MIPI_TX_LANE_CLK, MIPI_TX_LANE_1, -1, -1},
++	.lane_pn_swap = {false, false, false, false, false},
++	.output_mode = OUTPUT_MODE_DSI_VIDEO,
++	.video_mode = BURST_MODE,
++	.output_format = OUT_FORMAT_RGB_24_BIT,
++	.sync_info = {
++		.vid_hsa_pixels = ST7701_HD228001C31_HSA,
++		.vid_hbp_pixels = ST7701_HD228001C31_HBP,
++		.vid_hfp_pixels = ST7701_HD228001C31_HFP,
++		.vid_hline_pixels = ST7701_HD228001C31_HACT,
++		.vid_vsa_lines = ST7701_HD228001C31_VSA,
++		.vid_vbp_lines = ST7701_HD228001C31_VBP,
++		.vid_vfp_lines = ST7701_HD228001C31_VFP,
++		.vid_active_lines = ST7701_HD228001C31_VACT,
++		.vid_vsa_pos_polarity = true,
++		.vid_hsa_pos_polarity = false,
++	},
++	.pixel_clk = HD22_PIXEL_CLK(ST7701_HD228001C31),
++};
++
++const struct hs_settle_s hs_timing_cfg_st7701_368x552 = { .prepare = 6, .zero = 32, .trail = 1 };
++
++#ifndef CVI_U8
++#define CVI_U8 unsigned char
++#endif
++
++static CVI_U8 data_st7701_hd228001c31_1[] = { 0xff, 0x77,0x01,0x00,0x00,0x13 }; // 6
++static CVI_U8 data_st7701_hd228001c31_2[] = { 0xef, 0x08 }; // 2
++static CVI_U8 data_st7701_hd228001c31_3[] = { 0xff, 0x77,0x01,0x00,0x00,0x10 }; // 6
++static CVI_U8 data_st7701_hd228001c31_4[] = { 0xc0, 0x44, 0x00 }; // 3
++static CVI_U8 data_st7701_hd228001c31_5[] = { 0xc1, 0x0b, 0x02 }; // 3
++static CVI_U8 data_st7701_hd228001c31_6[] = { 0xc2, 0x07, 0x1f }; // 3
++static CVI_U8 data_st7701_hd228001c31_7[] = { 0xcc, 0x10 }; // 2
++static CVI_U8 data_st7701_hd228001c31_8[] = { 0xb0, 0x0F,0x1E,0x25,0x0D,0x11,0x06,0x12,0x08,0x08,0x2A,0x05,0x12,0x10,0x2B,0x32,0x1F }; // 17
++static CVI_U8 data_st7701_hd228001c31_9[] = { 0xb1, 0x0F,0x1E,0x25,0x0D,0x11,0x05,0x12,0x08,0x08,0x2B,0x05,0x12,0x10,0x2B,0x32,0x1F }; // 17
++static CVI_U8 data_st7701_hd228001c31_10[] = { 0xff, 0x77,0x01,0x00,0x00,0x11 }; // 6
++static CVI_U8 data_st7701_hd228001c31_11[] = { 0xb0, 0x35 }; // 2
++static CVI_U8 data_st7701_hd228001c31_12[] = { 0xb1, 0x45 }; // 2
++static CVI_U8 data_st7701_hd228001c31_13[] = { 0xb2, 0x87 }; // 2
++static CVI_U8 data_st7701_hd228001c31_14[] = { 0xb3, 0x80 }; // 2
++static CVI_U8 data_st7701_hd228001c31_15[] = { 0xb5, 0x80 }; // 2 
++static CVI_U8 data_st7701_hd228001c31_16[] = { 0xb7, 0x85 }; // 2
++static CVI_U8 data_st7701_hd228001c31_17[] = { 0xb8, 0x11 }; // 2
++static CVI_U8 data_st7701_hd228001c31_18[] = { 0xbb, 0x03 }; // 2
++static CVI_U8 data_st7701_hd228001c31_19[] = { 0xc0, 0x07 }; // 2
++static CVI_U8 data_st7701_hd228001c31_20[] = { 0xc1, 0x78 }; // 2
++static CVI_U8 data_st7701_hd228001c31_21[] = { 0xc2, 0x78 }; // 2
++static CVI_U8 data_st7701_hd228001c31_22[] = { 0xd0, 0x88 }; // 2
++// 23 delay 100 ms
++static CVI_U8 data_st7701_hd228001c31_24[] = { 0xe0, 0x00, 0x00, 0x02}; // 4
++static CVI_U8 data_st7701_hd228001c31_25[] = { 0xe1, 0x03,0x30,0x07,0x30,0x02,0x30,0x06,0x30,0x00,0x44,0x44 }; //12
++static CVI_U8 data_st7701_hd228001c31_26[] = { 0xe2, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; //12
++static CVI_U8 data_st7701_hd228001c31_27[] = { 0xe3, 0x00,0x00,0x22,0x00 }; // 5
++static CVI_U8 data_st7701_hd228001c31_28[] = { 0xe4, 0x22, 0x00 }; // 3
++static CVI_U8 data_st7701_hd228001c31_29[] = { 0xe5, 0x0A,0x34,0x30,0xE0,0x08,0x32,0x30,0xE0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; // 17
++static CVI_U8 data_st7701_hd228001c31_30[] = { 0xe6, 0x00, 0x00, 0x22, 0x00 }; // 5
++static CVI_U8 data_st7701_hd228001c31_31[] = { 0xe7, 0x22, 0x00 }; // 3
++static CVI_U8 data_st7701_hd228001c31_32[] = { 0xe8, 0x09,0x33,0x30,0xE0,0x07,0x31,0x30,0xE0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; // 17
++static CVI_U8 data_st7701_hd228001c31_33[] = { 0xeb, 0x00,0x01,0x10,0x10,0x11,0x00,0x00 }; // 8
++static CVI_U8 data_st7701_hd228001c31_34[] = { 0xed, 0xFF,0xFF,0xF0,0x45,0xBA,0x2F,0xFF,0xFF,0xFF,0xFF,0xF2,0xAB,0x54,0x0F,0xFF,0xFF }; // 17
++static CVI_U8 data_st7701_hd228001c31_35[] = { 0xef, 0x08,0x08,0x08,0x45,0x3F,0x54 }; // 7
++static CVI_U8 data_st7701_hd228001c31_36[] = { 0xff, 0x77,0x01,0x00,0x00,0x13 }; // 6
++static CVI_U8 data_st7701_hd228001c31_37[] = { 0xe8, 0x00, 0x0e }; // 3
++static CVI_U8 data_st7701_hd228001c31_38[] = { 0x11 }; // 1
++// 39 delay 120 ms
++static CVI_U8 data_st7701_hd228001c31_40[] = { 0xe8, 0x00, 0x0c }; // 3
++// 41 delay 10 ms
++static CVI_U8 data_st7701_hd228001c31_42[] = { 0xe8, 0x00, 0x00 }; // 3
++static CVI_U8 data_st7701_hd228001c31_43[] = { 0xff, 0x77,0x01,0x00,0x00,0x00 }; // 6
++static CVI_U8 data_st7701_hd228001c31_44[] = { 0x29 }; // 1
++// 45 delay 50 ms
++
++
++// len == 1 , type 0x05
++// len == 2 , type 0x15 or type 23
++// len >= 3 , type 0x29 or type 0x39
++#define TYPE1_DCS_SHORT_WRITE 0x05
++#define TYPE2_DCS_SHORT_WRITE 0x15
++#define TYPE3_DCS_LONG_WRITE 0x39
++#define TYPE3_GENERIC_LONG_WRITE 0x29
++const struct dsc_instr dsi_init_cmds_st7701_368x552[] = {
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_1 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_2 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_3 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_4 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_5 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_6 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_7 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_8 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_9 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_10 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_11 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_12 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_13 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_14 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_15 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_16 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_17 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_18 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_19 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_20 },
++  {.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_21 },
++  {.delay = 100, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_22 },
++  // 23 is delay 100ms
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 4, .data = data_st7701_hd228001c31_24 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 12, .data = data_st7701_hd228001c31_25 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 12, .data = data_st7701_hd228001c31_26 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 5, .data = data_st7701_hd228001c31_27 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_28 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_29 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 5, .data = data_st7701_hd228001c31_30 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_31 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_32 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 8, .data = data_st7701_hd228001c31_33 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_34 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 7, .data = data_st7701_hd228001c31_35 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_36 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_37 },
++  {.delay = 120, .data_type = TYPE1_DCS_SHORT_WRITE, .size = 1, .data = data_st7701_hd228001c31_38 },
++  // 39 is delay 120ms
++  {.delay = 10, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_40 },
++  // 41 is delay 10ms
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_42 },
++  {.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_43 },
++  {.delay = 50, .data_type = TYPE1_DCS_SHORT_WRITE, .size = 1, .data = data_st7701_hd228001c31_44 },
++};
++
++#else
++#error "MIPI_TX_PARAM multi-delcaration!!"
++#endif // _MIPI_TX_PARAM_ST_7701_HD22801C31_H_
+diff --git a/include/cvitek/cvi_panels/dsi_st7701_hd228001c31_alt0.h b/include/cvitek/cvi_panels/dsi_st7701_hd228001c31_alt0.h
+new file mode 100644
+index 0000000000..2d6dd875ec
+--- /dev/null
++++ b/include/cvitek/cvi_panels/dsi_st7701_hd228001c31_alt0.h
+@@ -0,0 +1,224 @@
++#ifndef _MIPI_TX_PARAM_ST_7701_HD228001C31_ALT0_H_
++#define _MIPI_TX_PARAM_ST_7701_HD228001C31_ALT0_H_
++
++#ifndef __UBOOT__
++#include <linux/vo_mipi_tx.h>
++#include <linux/cvi_comm_mipi_tx.h>
++#else
++#include <cvi_mipi.h>
++#endif
++
++// vendor
++#define ST7701_HD228001C31_ALT0_VACT	552
++#define ST7701_HD228001C31_ALT0_VSA		2
++#define ST7701_HD228001C31_ALT0_VBP		20
++#define ST7701_HD228001C31_ALT0_VFP		20
++
++#define ST7701_HD228001C31_ALT0_HACT		368
++#define ST7701_HD228001C31_ALT0_HSA		8
++#define ST7701_HD228001C31_ALT0_HBP		160
++#define ST7701_HD228001C31_ALT0_HFP		160
++
++
++// calc
++/*
++#define ST7701_HD228001C31_ALT0_VACT	552
++#define ST7701_HD228001C31_ALT0_VSA	10
++#define ST7701_HD228001C31_ALT0_VBP	6
++#define ST7701_HD228001C31_ALT0_VFP	3
++
++#define ST7701_HD228001C31_ALT0_HACT	368
++#define ST7701_HD228001C31_ALT0_HSA	32
++#define ST7701_HD228001C31_ALT0_HBP	80
++#define ST7701_HD228001C31_ALT0_HFP	48
++*/
++
++#define HD22_ALT0_PIXEL_CLK(x) ((x##_VACT + x##_VSA + x##_VBP + x##_VFP) \
++	* (x##_HACT + x##_HSA + x##_HBP + x##_HFP) * 75 / 1000)
++
++struct combo_dev_cfg_s dev_cfg_st7701_368x552_alt0 = {
++	.devno = 0,
++	.lane_id = {MIPI_TX_LANE_0, MIPI_TX_LANE_CLK, MIPI_TX_LANE_1, -1, -1},
++	.lane_pn_swap = {false, false, false, false, false},
++	.output_mode = OUTPUT_MODE_DSI_VIDEO,
++	.video_mode = BURST_MODE,
++	.output_format = OUT_FORMAT_RGB_24_BIT,
++	.sync_info = {
++		.vid_hsa_pixels = ST7701_HD228001C31_ALT0_HSA,
++		.vid_hbp_pixels = ST7701_HD228001C31_ALT0_HBP,
++		.vid_hfp_pixels = ST7701_HD228001C31_ALT0_HFP,
++		.vid_hline_pixels = ST7701_HD228001C31_ALT0_HACT,
++		.vid_vsa_lines = ST7701_HD228001C31_ALT0_VSA,
++		.vid_vbp_lines = ST7701_HD228001C31_ALT0_VBP,
++		.vid_vfp_lines = ST7701_HD228001C31_ALT0_VFP,
++		.vid_active_lines = ST7701_HD228001C31_ALT0_VACT,
++		.vid_vsa_pos_polarity = true,
++		.vid_hsa_pos_polarity = false,
++	},
++	.pixel_clk = HD22_ALT0_PIXEL_CLK(ST7701_HD228001C31_ALT0),
++};
++
++const struct hs_settle_s hs_timing_cfg_st7701_368x552_alt0 = { .prepare = 6, .zero = 32, .trail = 1 };
++
++#ifndef CVI_U8
++#define CVI_U8 unsigned char
++#endif
++
++static CVI_U8 data_st7701_hd228001c31_alt0_0[] = { 0x11 }; // 1
++static CVI_U8 data_st7701_hd228001c31_alt0_1[] = { 0xff, 0x77, 0x01, 0x00, 0x00, 0x13 }; // 6
++static CVI_U8 data_st7701_hd228001c31_alt0_2[] = { 0xef, 0x08 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_3[] = { 0xff, 0x77, 0x01, 0x00, 0x00, 0x10 }; // 6
++static CVI_U8 data_st7701_hd228001c31_alt0_4[] = { 0xc0, 0x44, 0x00 }; // 3
++static CVI_U8 data_st7701_hd228001c31_alt0_5[] = { 0xc1, 0x14, 0x06 }; // 3
++static CVI_U8 data_st7701_hd228001c31_alt0_6[] = { 0xc2, 0x07, 0x1f }; // 3
++static CVI_U8 data_st7701_hd228001c31_alt0_7[] = { 0xcc, 0x30 }; // 2
++
++
++// gamma setting
++static CVI_U8 data_st7701_hd228001c31_alt0_8[] = { 0xb0, 0x0f, 0x16, 0x1a, 0x07, 0x0d, 0x05, 0x02, 0x09,
++	0x08, 0x1f, 0x05, 0x13, 0x10, 0x2b, 0x33, 0x1f }; // 17
++
++static CVI_U8 data_st7701_hd228001c31_alt0_9[] = { 0xb1, 0x0f, 0x12, 0x17, 0x0e ,0x0e ,0x04, 0x00, 0x06,
++	0x06, 0x1d, 0x05, 0x13, 0x11, 0x26, 0x2d, 0x1f }; // 17
++
++
++// power control
++static CVI_U8 data_st7701_hd228001c31_alt0_10[] = { 0xff, 0x77, 0x01, 0x00, 0x00, 0x11 }; // 6
++
++// vcom setting
++static CVI_U8 data_st7701_hd228001c31_alt0_11[] = { 0xb1, 0x7c }; // 2
++// vcom setting end
++
++static CVI_U8 data_st7701_hd228001c31_alt0_12[] = { 0xb2, 0x87 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_13[] = { 0xb3, 0x80 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_14[] = { 0xb5, 0x49 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_15[] = { 0xb7, 0x85 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_16[] = { 0xb8, 0x20 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_17[] = { 0xc0, 0x07 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_18[] = { 0xc1, 0x08 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_19[] = { 0xc2, 0x08 }; // 2
++static CVI_U8 data_st7701_hd228001c31_alt0_20[] = { 0xd0, 0x88 }; // 2
++// power control end
++
++static CVI_U8 data_st7701_hd228001c31_alt0_21[] = { 0xB1, 0x0F, 0x12, 0x17, 0x0E, 0x0E, 0x04,
++	0x00, 0x06, 0x06, 0x1D, 0x05, 0x13, 0x11, 0x26, 0x2D, 0x1F}; // 17
++
++
++static CVI_U8 data_st7701_hd228001c31_alt0_22[] = { 0xB5, 0x49 };
++static CVI_U8 data_st7701_hd228001c31_alt0_23[] = { 0xB7, 0x85 };
++static CVI_U8 data_st7701_hd228001c31_alt0_24[] = { 0xB8, 0x20 };
++static CVI_U8 data_st7701_hd228001c31_alt0_25[] = { 0xC0, 0x07 };
++static CVI_U8 data_st7701_hd228001c31_alt0_26[] = { 0xC1, 0x08 };
++static CVI_U8 data_st7701_hd228001c31_alt0_27[] = { 0xC2, 0x08 };
++static CVI_U8 data_st7701_hd228001c31_alt0_28[] = { 0xD0, 0x88 };
++
++
++static CVI_U8 data_st7701_hd228001c31_alt0_29[] = { 0xe0, 0x00, 0x02 };
++static CVI_U8 data_st7701_hd228001c31_alt0_30[] = { 0xE1, 0x0A, 0xA0, 0x0C, 0xA0, 0x09, 0xA0, 0x0B,
++	0xA0, 0x00, 0x44, 0x44 }; // 12
++static CVI_U8 data_st7701_hd228001c31_alt0_31[] = { 0xE2, 0x00, 0x00, 0x44, 0x44, 0x05, 0xA0, 0x00,
++       	0x00, 0x05, 0xA0, 0x00, 0x00 }; // 13
++static CVI_U8 data_st7701_hd228001c31_alt0_32[] = { 0xE3, 0x00, 0x00, 0x22, 0x22 }; // 5
++static CVI_U8 data_st7701_hd228001c31_alt0_33[] = { 0xe4, 0x44, 0x44 }; // 3
++static CVI_U8 data_st7701_hd228001c31_alt0_34[] = { 0xE5, 0x11, 0x3D, 0x0A, 0xC0, 0x13, 0x3F, 0x0A,
++	0xC0, 0x0D, 0x39, 0x0A, 0xC0, 0x0F, 0x3B, 0x0A, 0xC0 }; // 17
++static CVI_U8 data_st7701_hd228001c31_alt0_35[] = { 0xE6, 0x00, 0x00, 0x22, 0x22 }; // 5
++static CVI_U8 data_st7701_hd228001c31_alt0_36[] = { 0xE7, 0x44, 0x44 }; // 3
++static CVI_U8 data_st7701_hd228001c31_alt0_37[] = { 0xE8, 0x10, 0x3C, 0x0A, 0xC0, 0x12, 0x3E, 0x0A,
++       	0xC0, 0x0C, 0x38, 0x0A, 0xC0, 0x0E, 0x3A, 0x0A, 0xC0 }; // 17
++static CVI_U8 data_st7701_hd228001c31_alt0_38[] = { 0xEB, 0x00, 0x01, 0xE4, 0xE4, 0x44, 0x88, 0x40 }; // 8
++
++static CVI_U8 data_st7701_hd228001c31_alt0_39[] = { 0xED, 0x55, 0x44, 0x77, 0x66, 0xF0, 0xFC, 0x1A,
++       	0x2B, 0xB2, 0xA1, 0xCF, 0x0F, 0x66, 0x77, 0x44, 0x55 }; //17
++
++static CVI_U8 data_st7701_hd228001c31_alt0_40[] = { 0xEF, 0x10, 0x0D, 0x04, 0x08, 0x3F, 0x1F }; // 7
++static CVI_U8 data_st7701_hd228001c31_alt0_41[] = { 0xFF, 0x77, 0x01, 0x00, 0x00, 0x13 }; // 6
++
++static CVI_U8 data_st7701_hd228001c31_alt0_42[] = { 0xE8, 0x00, 0x0E }; // 3
++
++static CVI_U8 data_st7701_hd228001c31_alt0_43[] = { 0x11 }; // 1
++//delay 120 ms
++static CVI_U8 data_st7701_hd228001c31_alt0_44[] = { 0xE8, 0x00, 0x0c }; // 3
++//delay 10 ms
++
++static CVI_U8 data_st7701_hd228001c31_alt0_45[] = { 0xE8, 0x00, 0x00 }; // 3
++
++static CVI_U8 data_st7701_hd228001c31_alt0_46[] = { 0xff, 0x77, 0x01, 0x00, 0x00, 0x00}; // 6
++
++static CVI_U8 data_st7701_hd228001c31_alt0_47[] = { 0x29 }; // 1
++//delay 50 ms
++
++
++// len == 1 , type 0x05
++// len == 2 , type 0x15 or type 23
++// len >= 3 , type 0x29 or type 0x39
++#define TYPE1_DCS_SHORT_WRITE 0x05
++#define TYPE2_DCS_SHORT_WRITE 0x15
++#define TYPE3_DCS_LONG_WRITE 0x39
++#define TYPE3_GENERIC_LONG_WRITE 0x29
++const struct dsc_instr dsi_init_cmds_st7701_368x552_alt0[] = {
++{.delay = 0, .data_type = TYPE1_DCS_SHORT_WRITE,    .size = 1, .data = data_st7701_hd228001c31_alt0_0 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_alt0_1 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE,    .size = 2, .data = data_st7701_hd228001c31_alt0_2 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_alt0_3 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_alt0_4 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_alt0_5 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_alt0_6 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE,    .size = 2, .data = data_st7701_hd228001c31_alt0_7 },
++
++
++// gamma cluster setting
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_alt0_8 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_alt0_9 },
++
++// power control
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_alt0_10 },
++// vcom setting
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_11 },
++// vcom setting end
++
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_11 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_12 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_13 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_14 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_15 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_16 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_17 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_18 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_19 },
++{.delay = 100, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_20 },
++// power control end
++
++{.delay = 100, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_alt0_21 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_22 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_23 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_24 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_25 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_26 },
++{.delay = 0, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_27 },
++{.delay = 100, .data_type = TYPE2_DCS_SHORT_WRITE, .size = 2, .data = data_st7701_hd228001c31_alt0_28 },
++
++{.delay = 100, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 4, .data = data_st7701_hd228001c31_alt0_29 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 12, .data = data_st7701_hd228001c31_alt0_30 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 13, .data = data_st7701_hd228001c31_alt0_31 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 5, .data = data_st7701_hd228001c31_alt0_32 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_alt0_33 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_alt0_34 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 5, .data = data_st7701_hd228001c31_alt0_35 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_alt0_36 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_alt0_37 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 8, .data = data_st7701_hd228001c31_alt0_38 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 17, .data = data_st7701_hd228001c31_alt0_39 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 7, .data = data_st7701_hd228001c31_alt0_40 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_alt0_41 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_alt0_42 },
++{.delay = 120, .data_type = TYPE1_DCS_SHORT_WRITE, .size = 1, .data = data_st7701_hd228001c31_alt0_43 },
++{.delay = 120, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_alt0_44 },
++{.delay = 10, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 3, .data = data_st7701_hd228001c31_alt0_45 },
++{.delay = 0, .data_type = TYPE3_GENERIC_LONG_WRITE, .size = 6, .data = data_st7701_hd228001c31_alt0_46 },
++{.delay = 50, .data_type = TYPE1_DCS_SHORT_WRITE, .size = 1, .data = data_st7701_hd228001c31_alt0_47 },
++};
++
++#else
++#error "MIPI_TX_PARAM multi-delcaration!!"
++#endif // _MIPI_TX_PARAM_ST_7701_HD22801C31_H_
+diff --git a/include/cvitek/cvi_panels/dsi_zct2133v1.h b/include/cvitek/cvi_panels/dsi_zct2133v1.h
+new file mode 100644
+index 0000000000..56549dde6a
+--- /dev/null
++++ b/include/cvitek/cvi_panels/dsi_zct2133v1.h
+@@ -0,0 +1,77 @@
++#ifndef _MIPI_TX_PARAM_ZCT2133V1_H_
++#define _MIPI_TX_PARAM_ZCT2133V1_H_
++
++#ifndef __UBOOT__
++#include <linux/vo_mipi_tx.h>
++#include <linux/cvi_comm_mipi_tx.h>
++#else
++#include <cvi_mipi.h>
++#endif
++
++#define ZCT2133V1_VACT	1280
++#define ZCT2133V1_VSA	10
++#define ZCT2133V1_VBP	34
++#define ZCT2133V1_VFP	3
++
++#define ZCT2133V1_HACT	800
++#define ZCT2133V1_HSA	80
++#define ZCT2133V1_HBP	136
++#define ZCT2133V1_HFP	56
++
++#define ZCT_PIXEL_CLK(x) ((x##_VACT + x##_VSA + x##_VBP + x##_VFP) \
++	* (x##_HACT + x##_HSA + x##_HBP + x##_HFP) * 60 / 1000)
++
++struct combo_dev_cfg_s dev_cfg_zct2133v1_800x1280 = {
++	.devno = 0,
++	.lane_id = {MIPI_TX_LANE_0, MIPI_TX_LANE_CLK, MIPI_TX_LANE_1, -1, -1},
++	.lane_pn_swap = {false, false, false, false, false},
++	.output_mode = OUTPUT_MODE_DSI_VIDEO,
++	.video_mode = BURST_MODE,
++	.output_format = OUT_FORMAT_RGB_24_BIT,
++	.sync_info = {
++		.vid_hsa_pixels = ZCT2133V1_HSA,
++		.vid_hbp_pixels = ZCT2133V1_HBP,
++		.vid_hfp_pixels = ZCT2133V1_HFP,
++		.vid_hline_pixels = ZCT2133V1_HACT,
++		.vid_vsa_lines = ZCT2133V1_VSA,
++		.vid_vbp_lines = ZCT2133V1_VBP,
++		.vid_vfp_lines = ZCT2133V1_VFP,
++		.vid_active_lines = ZCT2133V1_VACT,
++		.vid_vsa_pos_polarity = true,
++		.vid_hsa_pos_polarity = false,
++	},
++	.pixel_clk = ZCT_PIXEL_CLK(ZCT2133V1),
++};
++
++const struct hs_settle_s hs_timing_cfg_zct2133v1_800x1280 = { .prepare = 6, .zero = 32, .trail = 1 };
++
++#ifndef CVI_U8
++#define CVI_U8 unsigned char
++#endif
++
++static CVI_U8 data_zct2133v1_0[] = { 0xE1, 0x93 };
++static CVI_U8 data_zct2133v1_1[] = { 0xE2, 0x65 };
++static CVI_U8 data_zct2133v1_2[] = { 0xE3, 0xF8 };
++static CVI_U8 data_zct2133v1_3[] = { 0x80, 0x01 };
++static CVI_U8 data_zct2133v1_4[] = { 0x11 };
++static CVI_U8 data_zct2133v1_5[] = { 0x29 };
++
++// len == 1 , type 0x05
++// len == 2 , type 0x15 or type 23
++// len >= 3 , type 0x29 or type 0x39
++#define TYPE1 0x05
++#define TYPE2 0x15
++#define TYPE3 0x29
++
++const struct dsc_instr dsi_init_cmds_zct2133v1_800x1280[] = {
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_zct2133v1_0 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_zct2133v1_1 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_zct2133v1_2 },
++	{.delay = 0, .data_type = TYPE2, .size = 2, .data = data_zct2133v1_3 },
++	{.delay = 0, .data_type = TYPE1, .size = 1, .data = data_zct2133v1_4 },
++	{.delay = 0, .data_type = TYPE1, .size = 1, .data = data_zct2133v1_5 },
++};
++
++#else
++#error "MIPI_TX_PARAM multi-delcaration!!"
++#endif // _MIPI_TX_PARAM_ZCT2133V1_H_
+-- 
+2.44.0
+

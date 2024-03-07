@@ -1,0 +1,26 @@
+From b14006687e8039270be43bdbc1b272495edea681 Mon Sep 17 00:00:00 2001
+From: Justin Hammond <justin@dynam.ac>
+Date: Wed, 6 Mar 2024 00:12:58 +0800
+Subject: [PATCH] fix up monitor path
+
+---
+ make_helpers/fip.mk | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/make_helpers/fip.mk b/make_helpers/fip.mk
+index e314c57..3c5a7cc 100644
+--- a/make_helpers/fip.mk
++++ b/make_helpers/fip.mk
+@@ -11,7 +11,8 @@ CHIP_CONF_PATH = ${BUILD_PLAT}/chip_conf.bin
+ ifeq (${BOOT_CPU},aarch64)
+ MONITOR_PATH = plat/${CHIP_ARCH}/prebuilt/bl31.bin
+ else ifeq (${BOOT_CPU},riscv)
+-MONITOR_PATH = ../opensbi/build/platform/generic/firmware/fw_dynamic.bin
++#MONITOR_PATH = ../opensbi/build/platform/generic/firmware/fw_dynamic.bin
++MONITOR_PATH = ${FW_DYNAMIC}
+ endif
+ 
+ fip%: export BLCP_IMG_RUNADDR=0x05200200
+-- 
+2.44.0
+

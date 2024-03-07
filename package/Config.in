@@ -1,0 +1,3 @@
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/aic-firmware/Config.in"
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/cloudutils/Config.in"
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/cvitek-modules/Config.in"

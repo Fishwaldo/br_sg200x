@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/boot/cvitek-fsbl/Config.in"

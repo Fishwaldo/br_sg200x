@@ -1,0 +1,202 @@
+From 83e8586b20da0e1a40ae96bdd88cfd7963b1e5e8 Mon Sep 17 00:00:00 2001
+From: Justin Hammond <justin@dynam.ac>
+Date: Tue, 5 Mar 2024 17:56:41 +0800
+Subject: [PATCH] add licheervnano patches
+
+---
+ board/cvitek/mars/board.c          |   2 +-
+ board/cvitek/mars/cvi_board_init.c | 102 +++++++++++++++++++++++++++++
+ include/cvi_board_memmap.h         |  37 +++++++++++
+ include/cvipart.h                  |  13 ++++
+ 4 files changed, 153 insertions(+), 1 deletion(-)
+ create mode 100644 board/cvitek/mars/cvi_board_init.c
+ create mode 100644 include/cvi_board_memmap.h
+ create mode 100644 include/cvipart.h
+
+diff --git a/board/cvitek/mars/board.c b/board/cvitek/mars/board.c
+index 9c961ac149..2fac11353e 100644
+--- a/board/cvitek/mars/board.c
++++ b/board/cvitek/mars/board.c
+@@ -152,7 +152,7 @@ void pinmux_config(int io_type)
+ 	}
+ }
+ 
+-#include "../cvi_board_init.c"
++#include "cvi_board_init.c"
+ 
+ #if defined(CONFIG_PHY_CVITEK) /* config cvitek cv181x eth internal phy on ASIC board */
+ static void cv181x_ephy_id_init(void)
+diff --git a/board/cvitek/mars/cvi_board_init.c b/board/cvitek/mars/cvi_board_init.c
+new file mode 100644
+index 0000000000..d8bb55b693
+--- /dev/null
++++ b/board/cvitek/mars/cvi_board_init.c
+@@ -0,0 +1,102 @@
++__attribute__((optimize("O0")))
++// 1.26ms
++void suck_loop(uint64_t loop) {
++        loop = loop * 50 * 100;
++        uint64_t a;
++        while (loop > 0) {
++                a = loop / (uint64_t)99;
++                a = loop / (uint64_t)77;
++                a = loop / (uint64_t)55;
++                a = loop / (uint64_t)33;
++                a = loop / (uint64_t)11;
++                a = loop / (uint64_t)999;
++                a = loop / (uint64_t)777;
++                a = loop / (uint64_t)555;
++                a = loop / (uint64_t)333;
++                a = loop / (uint64_t)111;
++                a = loop / (uint64_t)9999;
++                a = loop / (uint64_t)7777;
++                a = loop / (uint64_t)5555;
++                a = loop / (uint64_t)3333;
++                a = loop / (uint64_t)1111;
++                a = loop / (uint64_t)99999;
++                a = loop / (uint64_t)77777;
++                a = loop / (uint64_t)55555;
++                a = loop / (uint64_t)33333;
++                a = loop / (uint64_t)11111;
++                loop--;
++        }
++}
++
++int cvi_board_init(void)
++{
++        uint32_t val;
++
++        // wifi power reset
++        mmio_write_32(0x0300104C, 0x3); // GPIOA 26
++        val = mmio_read_32(0x03020004); // GPIOA DIR
++        val |= (1 << 26); // output
++        mmio_write_32(0x03020004, val);
++
++        val = mmio_read_32(0x03020000); // signal level
++        val &= ~(1 << 26); // set level to low
++        mmio_write_32(0x03020000, val);
++
++        suck_loop(200);
++
++        val = mmio_read_32(0x03020000); // signal level
++        val |= (1 << 26); // set level to high
++        mmio_write_32(0x03020000, val);
++
++        // wifi sdio pinmux
++        mmio_write_32(0x030010D0, 0x0); // D3
++        mmio_write_32(0x030010D4, 0x0); // D2
++        mmio_write_32(0x030010D8, 0x0); // D1
++        mmio_write_32(0x030010DC, 0x0); // D0
++        mmio_write_32(0x030010E0, 0x0); // CMD
++        mmio_write_32(0x030010E4, 0x0); // CLK
++
++        // uart bluetooth
++        mmio_write_32(0x03001070, 0x1); // GPIOA 28 UART1 TX
++        mmio_write_32(0x03001074, 0x1); // GPIOA 29 UART1 RX
++        mmio_write_32(0x03001068, 0x4); // GPIOA 18 UART1 CTS
++        mmio_write_32(0x03001064, 0x4); // GPIOA 19 UART1 RTS
++
++        // PWM
++        //mmio_write_32(0x03001068, 0x2); // GPIOA 18 PWM 6
++
++        // lcd reset
++        mmio_write_32(0x030010A4, 0x0); // PWRGPIO 0 GPIO_MODE
++
++        // lcd backlight
++        //mmio_write_32(0x030010EC, 0x0); // GPIOB 0 PWM0_BUCK
++        mmio_write_32(0x030010EC, 0x3); // GPIOB 0 GPIO_MODE
++        val = mmio_read_32(0x03021004); // GPIOB DIR
++        val |= (1 << 0); // output
++        mmio_write_32(0x03021004, val);
++        val = mmio_read_32(0x03021000); // signal level
++        val |= (1 << 0); // set level to high
++        mmio_write_32(0x03021000, val);
++
++        // camera function
++        mmio_write_32(0x0300116C, 0x5); // RX4N CAM_MCLK0
++
++        // camera/tp i2c
++        mmio_write_32(0x03001090, 0x5); // PWR_GPIO6 IIC4_SCL
++        mmio_write_32(0x03001098, 0x5); // PWR_GPIO8 IIC4_SDA
++
++        // tp function
++        mmio_write_32(0x03001084, 0x3); // PWR_SEQ1 PWR_GPIO[3]
++        mmio_write_32(0x03001088, 0x3); // PWR_SEQ2 PWR_GPIO[4]
++        mmio_write_32(0x05027078, 0x11);// Unlock PWR_GPIO[3]
++        mmio_write_32(0x0502707c, 0x11);// Unlock PWR_GPIO[4]
++
++        // bitbang i2c for maixcam
++#ifdef MAIXCAM
++        mmio_write_32(0x0300105C, 0x3);// GPIOA 23 GPIO_MODE
++        mmio_write_32(0x03001060, 0x3);// GPIOA 24 GPIO_MODE
++#endif
++        // wait hardware bootup
++        suck_loop(100);
++        return 0;
++}
+diff --git a/include/cvi_board_memmap.h b/include/cvi_board_memmap.h
+new file mode 100644
+index 0000000000..6f1e4068d6
+--- /dev/null
++++ b/include/cvi_board_memmap.h
+@@ -0,0 +1,37 @@
++#ifndef __BOARD_MMAP__ab4bdb87__
++#define __BOARD_MMAP__ab4bdb87__
++
++#define CONFIG_SYS_TEXT_BASE 0x80200000  /* offset 2.0MiB */
++#define CVIMMAP_ATF_SIZE 0x80000  /* 512.0KiB */
++#define CVIMMAP_BOOTLOGO_ADDR 0x8ab30000  /* offset 171.1875MiB */
++#define CVIMMAP_BOOTLOGO_SIZE 0x7d0000  /* 7.8125MiB */
++#define CVIMMAP_CONFIG_SYS_INIT_SP_ADDR 0x82800000  /* offset 40.0MiB */
++#define CVIMMAP_CVI_UPDATE_HEADER_ADDR 0x817ffc00  /* offset 23.9990234375MiB */
++#define CVIMMAP_CVI_UPDATE_HEADER_SIZE 0x400  /* 1.0KiB */
++#define CVIMMAP_DRAM_BASE 0x80000000  /* offset 0.0KiB */
++#define CVIMMAP_DRAM_SIZE 0x10000000  /* 256.0MiB */
++#define CVIMMAP_FRAMEBUFFER_ADDR 0x8ab30000  /* offset 171.1875MiB */
++#define CVIMMAP_FRAMEBUFFER_SIZE 0x7d0000  /* 7.8125MiB */
++#define CVIMMAP_FREERTOS_ADDR 0x8fe00000  /* offset 254.0MiB */
++#define CVIMMAP_FREERTOS_RESERVED_ION_SIZE 0x1600000  /* 22.0MiB */
++#define CVIMMAP_FREERTOS_SIZE 0x200000  /* 2.0MiB */
++#define CVIMMAP_FSBL_C906L_START_ADDR 0x8fe00000  /* offset 254.0MiB */
++#define CVIMMAP_FSBL_UNZIP_ADDR 0x81800000  /* offset 24.0MiB */
++#define CVIMMAP_FSBL_UNZIP_SIZE 0x1000000  /* 16.0MiB */
++#define CVIMMAP_H26X_BITSTREAM_ADDR 0x8b300000  /* offset 179.0MiB */
++#define CVIMMAP_H26X_BITSTREAM_SIZE 0x200000  /* 2.0MiB */
++#define CVIMMAP_H26X_ENC_BUFF_ADDR 0x8b500000  /* offset 181.0MiB */
++#define CVIMMAP_H26X_ENC_BUFF_SIZE 0x0  /* 0.0KiB */
++#define CVIMMAP_ION_ADDR 0x8b300000  /* offset 179.0MiB */
++#define CVIMMAP_ION_SIZE 0x4b00000  /* 75.0MiB */
++#define CVIMMAP_ISP_MEM_BASE_ADDR 0x8b500000  /* offset 181.0MiB */
++#define CVIMMAP_ISP_MEM_BASE_SIZE 0x1400000  /* 20.0MiB */
++#define CVIMMAP_KERNEL_MEMORY_ADDR 0x80000000  /* offset 0.0KiB */
++#define CVIMMAP_KERNEL_MEMORY_SIZE 0xfe00000  /* 254.0MiB */
++#define CVIMMAP_MONITOR_ADDR 0x80000000  /* offset 0.0KiB */
++#define CVIMMAP_OPENSBI_FDT_ADDR 0x80080000  /* offset 512.0KiB */
++#define CVIMMAP_OPENSBI_SIZE 0x80000  /* 512.0KiB */
++#define CVIMMAP_UIMAG_ADDR 0x81800000  /* offset 24.0MiB */
++#define CVIMMAP_UIMAG_SIZE 0x1000000  /* 16.0MiB */
++
++#endif /* __BOARD_MMAP__ab4bdb87__ */
+diff --git a/include/cvipart.h b/include/cvipart.h
+new file mode 100644
+index 0000000000..067fce6bda
+--- /dev/null
++++ b/include/cvipart.h
+@@ -0,0 +1,13 @@
++/* this file should be generated by mkcvipart.py,please do not modify this file manually*/
++
++#ifndef CVIPART_H
++#define CVIPART_H
++#ifndef CONFIG_ENV_IS_NOWHERE
++#define CONFIG_ENV_IS_NOWHERE
++#endif
++#define CONFIG_ENV_SIZE 0x20000
++#define PART_LAYOUT ""
++#define ROOTFS_DEV "/dev/mmcblk0p2"
++#define PARTS_OFFSET ""
++#define SPL_BOOT_PART_OFFSET 0x0
++#endif
+\ No newline at end of file
+-- 
+2.44.0
+

@@ -1,0 +1,92 @@
+name: build-all
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '.github/**'
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '.github/**'
+    
+jobs:
+  buildroot:
+    strategy:
+      fail-fast: true
+      matrix:
+        target: [ sipeed_licheervnano_defconfig ]
+    runs-on: ubuntu-22.04
+    steps:
+    - name: install dependencies
+      run: |
+        sudo apt-get install -y make gcc g++ unzip git bc python3 device-tree-compiler mtd-utils xz-utils
+    - name: Checkout Buildroot sources
+      uses: actions/checkout@v3
+      with:
+        repository: buildroot/buildroot
+        ref: 2023.11.2
+        path: buildroot
+    - name: Checkout SG200x Buildroot
+      uses: actions/checkout@v3
+      with:
+        path: sg200x
+    - name: buildroot ccache
+      id: br-ccache
+      uses: actions/cache@v3
+      env:
+        cache-name: br-ccache
+      with:
+        path: /home/runner/.buildroot-ccache
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.target }}
+    - name: buildroot download cache
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-download-files
+      with:
+        path: ${{ github.workspace }}/buildroot/dl/
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-downloads
+    - name: Build
+      run: |
+        export BR_LICHEERVNANO_OVERLAY_PATH=$(pwd)/sg200x
+        cd buildroot
+        make BR2_EXTERNAL=$BR_LICHEERVNANO_OVERLAY_PATH ${{ matrix.target }}
+        make
+        make ccache-stats
+    - name: Pack
+      run: |
+        cd ${{ github.workspace }}/buildroot/output/images/
+        ls -lah
+        if [ -f sdcard.img ]; then
+            xz -z sdcard.img
+            mv sdcard.img.xz sdcard-${{ matrix.target }}.img.xz
+        fi
+        echo "PACKAGE=${{ github.workspace }}/buildroot/output/images/sdcard-${{ matrix.target }}.img.xz" >> $GITHUB_ENV
+        echo "BRSDK=${{ github.workspace }}/buildroot/output/images/riscv*.tar.gz" >> $GITHUB_ENV
+    - name: Upload package
+      uses: actions/upload-artifact@master
+      with:
+        name: build-images
+        path: |
+          ${{env.PACKAGE}}
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-22.04
+    needs: [buildroot]
+    permissions: write-all
+    steps:
+      - name: download firmware
+        uses: actions/download-artifact@v3
+      - name: Create images
+        run: |
+          ls -lah *
+      - name: publish artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          append_body: true
+          files: |
+            build-images/*.xz

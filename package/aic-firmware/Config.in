@@ -1,0 +1,8 @@
+config BR2_PACKAGE_AIC_FIRMWARE
+	bool "AIC-firmware"
+	help
+	  This package enables access to aic wireless firmware
+	  blobs from the armbian firmware repository.
+
+	  https://github.com/armbian/firmware
+

@@ -1,0 +1,1 @@
+#source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/riscv-unknown-elf-gcc/Config.in.host"

@@ -1,0 +1,8 @@
+comment "cvi-tek Kernel Modules"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_CVITEK_MODULES
+	bool "cvi-tek Kernel Modules"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Kernel Modules for cvi-tek devices.
