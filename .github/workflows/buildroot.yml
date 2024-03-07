@@ -3,13 +3,13 @@ name: build-all
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths-ignore:
       - '.github/**'
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
     paths-ignore:
       - '.github/**'
     
@@ -19,7 +19,7 @@ jobs:
       fail-fast: true
       matrix:
         target: [ sipeed_licheervnano_defconfig ]
-    runs-on: ubuntu-22.04
+    runs-on: [self-hosted, linux]
     steps:
     - name: install dependencies
       run: |
