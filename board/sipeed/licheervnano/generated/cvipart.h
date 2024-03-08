@@ -2,9 +2,6 @@
 
 #ifndef CVIPART_H
 #define CVIPART_H
-#ifndef CONFIG_ENV_IS_NOWHERE
-#define CONFIG_ENV_IS_NOWHERE
-#endif
 #define CONFIG_ENV_SIZE 0x20000
 #define PART_LAYOUT ""
 #define ROOTFS_DEV "/dev/mmcblk0p2"

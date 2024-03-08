@@ -1,0 +1,180 @@
+comment "Config For cvitek based boards"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_CVITEKCONFIG
+    bool
+	default y
+
+menu "CVITEK Configuration"
+
+choice BR2_PACKAGE_CVITEK_BOARD
+	prompt "Board"
+
+	config BR2_PACKAGE_CVITEKCONFIG_BOARD_LICHEERVNANO
+		bool "LicheeRV Nano"
+		help
+		  Select this option if you are using a LicheeRV Nano board.
+
+	config BR2_PACKAGE_CVITEKCONFIG_BOARD_TEST
+		bool "Test"
+		help
+		  Select this option if you are using a test board.
+endchoice
+
+config BR2_PACKAGE_CVITEKCONFIG_ALLOCATE_FREERTOS_HEAP
+	int "Memory to allocate for FreeRTOS heap"
+	default 2
+	range 0 256
+	help
+	  Allocate FreeRTOS heap from the end of the RAM.
+
+config BR2_PACKAGE_CVITEKCONFIG_ALLOCATE_ION_HEAP
+	int "Memory to allocate for ION heap"
+	default 75
+	range 0 256
+	help
+	  Allocate ION heap from the end of the RAM.
+
+config BR2_PACKAGE_CVITEKCONFIG_ALLOCATE_H26X_BITSTREAM_HEAP
+	int "Memory to allocate for H26X BitStream heap"
+	default 2
+	range 0 BR2_PACKAGE_CVITEKCONFIG_ALLOCATE_ION_HEAP
+	help
+	  Allocate H264 Bitstream heap from the end of the RAM.
+	  It Must fit in the ION Heap Size (including what is allocated for ISP Heap)
+
+config BR2_PACKAGE_CVITEKCONFIG_ALLOCATE_ISP_HEAP
+	int "Memory to allocate for ISP heap"
+	default 20
+	range 0 BR2_PACKAGE_CVITEKCONFIG_ALLOCATE_ION_HEAP
+	help
+	  Allocate ISP heap from the end of the RAM.
+	  It Must fit in the ION Heap Size (including what is allocated for H26X Heap)
+
+
+
+choice BR2_PACKAGE_CVITEKCONFIG_PANEL
+	prompt "Panel Configured"
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_NONE
+		bool "None"
+		help
+		  Select this option if you are not using any panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ZCT2133V1
+		bool "zct2133v1"
+		help
+		  Select this option if you are using a zct2133v1 panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_HX8394
+		bool "hx8394"
+		help
+		  Select this option if you are using a hx8394-720x1280 panel.
+		
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ILI9881C
+		bool "ili9881c"
+		help
+		  Select this option if you are using a ili9881c panel.
+		
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ILI9881D
+		bool "ili9881d"
+		help
+		  Select this option if you are using a ili9881d panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_JD9366AB
+		bool "jd9366ab"
+		help
+		  Select this option if you are using a jd9366ab panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_NT35521
+		bool "nt35521"
+		help
+		  Select this option if you are using a nt35521 panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_OTA7290B
+		bool "ota7290b"
+		help
+		  Select this option if you are using a ota7290b panel.
+		
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ST7701_D300FPC9307A
+		bool "st7701_d300fpc9307a"
+		help
+		  Select this option if you are using a st7701_d300fpc9307a panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_OTA7290B
+		bool "ota7290b"
+		help
+		  Select this option if you are using a ota7290b panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ICN9707
+		bool "icn9707"
+		help
+		  Select this option if you are using a icn9707 panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ST7701_DXQ5D0019B480854
+		bool "st7701_dxq5d0019b480854"
+		help
+		  Select this option if you are using a st7701_dxq5d0019b480854 panel.
+		
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_3AML069LP01G
+		bool "3aml069lp01g"
+		help
+		  Select this option if you are using a 3aml069lp01g panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ST7701
+		bool "st7701 480x800" 
+		help
+		  Select this option if you are using a st7701 panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ST7701_HD228001C31
+		bool "st7701_hd228001c31 - 368x552"
+		help
+		  Select this option if you are using a st7701_hd228001c31 panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ST7785M
+		bool "st7785m"
+		help
+		  Select this option if you are using a st7785m panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_ST7789V
+		bool "st7789v"
+		help
+		  Select this option if you are using a st7789v panel.
+
+	config BR2_PACKAGE_CVITEKCONFIG_PANEL_EK79202
+		bool "ek79202"
+		help
+		  Select this option if you are using a ek79202 panel.
+	
+endchoice
+
+if BR2_PACKAGE_CVITEKCONFIG_BOARD_LICHEERVNANO
+
+	config BR2_PACKAGE_CVITEKCONFIG_DDR 	
+		string
+		default "ddr3_1866_x16"
+
+	config BR2_PACKAGE_CVITEKCONFIG_CHIP
+		string
+		default "sg2002"
+
+	config BR2_PACKAGE_CVITEKCONFIG_CHIP_ARCH
+		string
+		default "sg200x"
+
+	config BR2_PACKAGE_CVITEKCONFIG_ARCH
+		string
+		default "riscv"
+
+	config BR2_PACKAGE_CVITEKCONFIG_BOARD_NAME
+		string
+		default "licheervnano"
+
+	config BR2_PACKAGE_CVITEKCONFIG_STORAGE
+		string
+		default "sd"
+
+
+endif
+
+endmenu

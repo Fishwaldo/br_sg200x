@@ -32,25 +32,15 @@
 };
 
 &cvi_vo {
-#ifndef __UBOOT__
-	/delete-property/ reset-gpio;
-#else
-	// for uboot
         reset-gpio = <&porte 0 1>;
-#endif
-        /delete-property/ pwm-gpio;
+        pwm-gpio = <&portb 0 1>;
         /delete-property/ power-ct-gpio;
-
+        status = "okay";
 };
 
 &mipi_tx {
-        /delete-property/ pwm-gpio;
-#ifndef __UBOOT__
-	// for linux kernel
         reset-gpio = <&porte 0 1>;
-#else
-        /delete-property/ reset-gpio;
-#endif
+        pwm-gpio = <&porte 0 1>;
         /delete-property/ power-ct-gpio;
         status = "okay";
 };

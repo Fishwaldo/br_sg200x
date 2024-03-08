@@ -1,10 +1,10 @@
 comment "cvitek FSBL options"
 	depends on !BR2_LINUX_KERNEL
 
-config BR2_PACKAGE_CVITEK_FSBL
+config BR2_TARGET_CVITEKFSBL
 	bool "cvitek FSBL"
 	depends on BR2_LINUX_KERNEL
 	depends on BR2_TARGET_OPENSBI
 	depends on BR2_TARGET_UBOOT
 	help
-	  First Stage Boot Loader
+	  First Stage Boot Loader for cvitek

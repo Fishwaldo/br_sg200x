@@ -9,6 +9,7 @@ git clone https://github.com/Fishwaldo/sg200x
 export BR_LICHEERVNANO_OVERLAY_PATH=$(pwd)/sg200x
 cd buildroot
 make BR2_EXTERNAL=$BR_LICHEERVNANO_OVERLAY_PATH sipeed_licheervnano_defconfig
+make cvitekconfig
 make
 ```
 

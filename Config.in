@@ -1,3 +1,5 @@
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/cvitekconfig/Config.in"
+
 menu "Custom Packages"
 source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/Config.in"
 endmenu

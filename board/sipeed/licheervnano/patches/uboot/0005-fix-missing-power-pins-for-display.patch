@@ -1,0 +1,50 @@
+From b44e15166faafac4df0955b1dce740db981b7f0a Mon Sep 17 00:00:00 2001
+From: Justin Hammond <justin@dynam.ac>
+Date: Fri, 8 Mar 2024 17:55:06 +0800
+Subject: [PATCH] fix missing power pins for display
+
+---
+ drivers/video/cvitek/cvi_disp.c | 3 +++
+ drivers/video/cvitek/cvi_mipi.c | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/video/cvitek/cvi_disp.c b/drivers/video/cvitek/cvi_disp.c
+index 23ce46b149..e0215a212d 100644
+--- a/drivers/video/cvitek/cvi_disp.c
++++ b/drivers/video/cvitek/cvi_disp.c
+@@ -97,11 +97,14 @@ static int cvi_vo_probe(struct udevice *dev)
+ 	}
+ 	ret = gpio_request_by_name(dev, "power-ct-gpio", 0, &priv->ctrl_gpios.disp_power_ct_gpio,
+ 				   GPIOD_IS_OUT | GPIOD_IS_OUT_ACTIVE);
++#if 0
++	/* ignore errors if the power control pin is missing */
+ 	if (ret) {
+ 		printf("%s: Warning: cannot get power GPIO: ret=%d\n", __func__, ret);
+ 		if (ret != -ENOENT)
+ 			return ret;
+ 	}
++#endif
+ 	set_disp_ctrl_gpios(&priv->ctrl_gpios);
+ 
+ 	video_set_flush_dcache(dev, 1);
+diff --git a/drivers/video/cvitek/cvi_mipi.c b/drivers/video/cvitek/cvi_mipi.c
+index 3a04573517..75b3590641 100644
+--- a/drivers/video/cvitek/cvi_mipi.c
++++ b/drivers/video/cvitek/cvi_mipi.c
+@@ -150,10 +150,13 @@ int mipi_tx_set_combo_dev_cfg(const struct combo_dev_cfg_s *dev_cfg)
+ 
+ 	ret = dm_gpio_set_value(&ctrl_gpios.disp_power_ct_gpio,
+ 				ctrl_gpios.disp_power_ct_gpio.flags & GPIOD_ACTIVE_LOW ? 0 : 1);
++#if 0
++/* ignore errors if the power control pin is missing/invalid */
+ 	if (ret < 0) {
+ 		printf("dm_gpio_set_value(disp_power_ct_gpio, deassert) failed: %d", ret);
+ 		return ret;
+ 	}
++#endif
+ 	ret = dm_gpio_set_value(&ctrl_gpios.disp_pwm_gpio,
+ 				ctrl_gpios.disp_pwm_gpio.flags & GPIOD_ACTIVE_LOW ? 0 : 1);
+ 	if (ret < 0) {
+-- 
+2.44.0
+

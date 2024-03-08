@@ -54,6 +54,7 @@ jobs:
         export BR_LICHEERVNANO_OVERLAY_PATH=$(pwd)/sg200x
         cd buildroot
         make BR2_EXTERNAL=$BR_LICHEERVNANO_OVERLAY_PATH ${{ matrix.target }}
+        make cvitekconfig
         make
         make ccache-stats
     - name: Pack
