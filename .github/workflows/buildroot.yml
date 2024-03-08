@@ -55,7 +55,7 @@ jobs:
         cd buildroot
         make BR2_EXTERNAL=$BR_LICHEERVNANO_OVERLAY_PATH ${{ matrix.target }}
         make cvitekconfig
-        make
+        #make
         make ccache-stats
     - name: Pack
       run: |
