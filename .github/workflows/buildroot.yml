@@ -25,25 +25,25 @@ jobs:
       run: |
         sudo apt-get install -y make gcc g++ unzip git bc python3 device-tree-compiler mtd-utils xz-utils file sed binutils build-essential rsync findutils perl tar cpio
     - name: Checkout Buildroot sources
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: buildroot/buildroot
         ref: 2023.11.2
         path: buildroot
     - name: Checkout SG200x Buildroot
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: sg200x
     - name: buildroot ccache
       id: br-ccache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
         cache-name: br-ccache
       with:
         path: /home/runner/.buildroot-ccache
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.target }}
     - name: buildroot download cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
         cache-name: cache-download-files
       with:
