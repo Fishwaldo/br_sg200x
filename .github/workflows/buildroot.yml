@@ -24,8 +24,6 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt-get install -y make gcc g++ unzip git bc python3 device-tree-compiler mtd-utils xz-utils file sed binutils build-essential rsync findutils perl tar cpio
-        set
-        echo $HOME
     - name: Checkout Buildroot sources
       uses: actions/checkout@v3
       with:
@@ -42,7 +40,7 @@ jobs:
       env:
         cache-name: br-ccache
       with:
-        path: /home/runner/.buildroot-ccache
+        path: $HOME/.buildroot-ccache
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.target }}
     - name: buildroot download cache
       uses: actions/cache@v3
