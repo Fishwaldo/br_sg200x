@@ -107,6 +107,7 @@ endif
 UBOOT_POST_PATCH_HOOKS += UBOOT_APPLY_CVITEK_CONFIG_HOOK
 UBOOT_DEPENDENCIES += cvitekconfig
 LINUX_POST_PATCH_HOOKS += LINUX_APPLY_CVITEK_CONFIG_HOOK
+LINUX_POST_INSTALL_TARGET_HOOKS += LINUX_ADDITIONAL_INSTALL_STAGING_HOOK
 LINUX_DEPENDENCIES += cvitekconfig
 CVITEKFSBL_POST_PATCH_HOOKS += CVITEKFSBL_APPLY_CVITEK_CONFIG_HOOK
 CVITEKFSBL_DEPENDENCIES += cvitekconfig
@@ -114,21 +115,27 @@ CVITEKFSBL_DEPENDENCIES += cvitekconfig
 define UBOOT_APPLY_CVITEK_CONFIG_HOOK
 	@echo "Applying CVITEK Generated Config" 
 	$(INSTALL) -D -m 0644 $(TARGET_DIR)/include/cvi_board_memmap.h $(@D)/include/cvi_board_memmap.h
-	@cp $(BR2_GLOBAL_PATCH_DIR)../generated/cvipart.h $(@D)/include/cvipart.h
-	@cp $(BR2_GLOBAL_PATCH_DIR)../generated/uboot/cvi_board_init.c $(@D)/board/cvitek/
+	$(INSTALL) -D -m 0644 $(BR2_GLOBAL_PATCH_DIR)../generated/cvipart.h $(@D)/include/cvipart.h
+	$(INSTALL) -D -m 0644 $(BR2_GLOBAL_PATCH_DIR)../generated/uboot/cvi_board_init.c $(@D)/board/cvitek/
 endef
 
 define LINUX_APPLY_CVITEK_CONFIG_HOOK
 	@echo "Applying SG2002 Generated Config" 
 	$(INSTALL) -D -m 0644 $(TARGET_DIR)/include/cvi_board_memmap.h $(@D)/include/cvi_board_memmap.h
-	#@cp $(BR2_GLOBAL_PATCH_DIR)../generated/cvi_board_memmap.h $(@D)/include/cvi_board_memmap.h
-	@cp $(BR2_GLOBAL_PATCH_DIR)../generated/cvipart.h $(@D)/include/cvipart.h
+	$(INSTALL) -D -m 0644 $(BR2_GLOBAL_PATCH_DIR)../generated/cvipart.h $(@D)/include/cvipart.h
 endef
+
+define LINUX_ADDITIONAL_INSTALL_STAGING_HOOK
+	@echo "Installing Kernel Headers"
+	V=1 $(LINUX_MAKE_ENV) $(BR2_MAKE) $(LINUX_MAKE_FLAGS) -C $(LINUX_DIR) V=1 headers_install
+	$(INSTALL) -D -m 0644 $(@D)/drivers/staging/android/uapi/ion*.h $(LINUX_DIR)/usr/include/linux/
+	#Makefile:	${Q}cp ${KERNEL_PATH}/include/uapi/linux/dma-buf.h ${1}/linux/
+endef
+
 
 define CVITEKFSBL_APPLY_CVITEK_CONFIG_HOOK
 	@echo "Applying SG2002 Generated Config" 
 	$(INSTALL) -D -m 0644 $(TARGET_DIR)/include/cvi_board_memmap.h $(@D)/include/cvi_board_memmap.h
-	#@cp $(BR2_GLOBAL_PATCH_DIR)../generated/cvi_board_memmap.h $(@D)/include/cvi_board_memmap.h
 endef
 
 

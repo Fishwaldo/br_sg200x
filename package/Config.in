@@ -1,3 +1,6 @@
 source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/aic-firmware/Config.in"
 source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/cloudutils/Config.in"
 source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/cvitek-modules/Config.in"
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/cvitek-middleware/Config.in"
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/miniz/Config.in"
+source "$BR2_EXTERNAL_LICHEERVNANO_BR_PATH/package/cvitek-oss/Config.in"

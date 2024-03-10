@@ -1,0 +1,9 @@
+config BR2_PACKAGE_CVITEK_MIDDLEWARE
+    bool "CVITEK Middleware package"
+    select BR2_PACKAGE_MINIZ
+    select BR2_PACKAGE_JSON_C
+    select BR2_PACKAGE_TINYALSA
+    select BR2_PACKAGE_CVITEK_OSS
+    help
+      CVITEK Middleware and sample applications.
+      

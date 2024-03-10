@@ -1,0 +1,188 @@
+From c6d8a5f7729307bc35d5562b86201736f92c1880 Mon Sep 17 00:00:00 2001
+From: Justin Hammond <justin@dynam.ac>
+Date: Sun, 10 Mar 2024 15:49:10 +0800
+Subject: [PATCH] fix buildroot compiles
+
+---
+ v2/Makefile.param          |  7 +++----
+ v2/modules/bin/Makefile    | 34 +++++++++++++++++-----------------
+ v2/modules/osdc/Makefile   |  6 ++++--
+ v2/modules/sys/Makefile    |  3 ++-
+ v2/modules/vdec/Makefile   |  2 --
+ v2/modules/venc/Makefile   |  2 --
+ v2/pkgconfig/cvi_common.pc |  2 +-
+ v2/sample/sample.mk        |  6 +++---
+ 8 files changed, 30 insertions(+), 32 deletions(-)
+
+diff --git a/v2/Makefile.param b/v2/Makefile.param
+index e03d73d..0e4df16 100644
+--- a/v2/Makefile.param
++++ b/v2/Makefile.param
+@@ -40,9 +40,8 @@ else ifeq ($(SDK_VER), glibc_riscv64)
+   OPT_LEVEL := -Os
+   OPT_LEVEL += -mcpu=c906fdv -march=rv64imafdcv0p7xthead -mcmodel=medany -mabi=lp64d
+ else ifeq ($(SDK_VER), musl_riscv64)
+-  export CROSS_COMPILE = $(CROSS_COMPILE_MUSL_RISCV64)
+-  SYSROOT := $(ROOT_DIR)/../../host-tools/gcc/riscv64-linux-musl-x86_64/sysroot
+-  KERNEL_INC := $(KERNEL_DIR)/riscv/usr/include
++  SYSROOT := $(SYSROOT_DIR)
++  KERNEL_INC := $(KERNEL_DIR)
+   OPT_LEVEL := -Os
+   OPT_LEVEL += -mcpu=c906fdv -march=rv64imafdcv0p7xthead -mcmodel=medany -mabi=lp64d
+ endif
+@@ -95,7 +94,7 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
+ #
+ # export TARGET_PACKAGES_INCLUDE and TARGET_PACKAGES_LIBDIR from build/Makefile
+ #
+-WARNING_LEVEL=-Wall -Wextra -Werror
++WARNING_LEVEL=-Wall -Wextra
+ 
+ #Generate object files by CC
+ CFLAGS   = $(OPT_LEVEL) -std=gnu11 -g $(WARNING_LEVEL) -fPIC -ffunction-sections -fdata-sections -Wl,--gc-sections $(CVI_TARGET_PACKAGES_INCLUDE)
+diff --git a/v2/modules/bin/Makefile b/v2/modules/bin/Makefile
+index 0b4428f..20b6a4f 100644
+--- a/v2/modules/bin/Makefile
++++ b/v2/modules/bin/Makefile
+@@ -9,8 +9,8 @@ SRCS := $(wildcard $(SDIR)/*.c)
+ 
+ # 3rdparty lib
+ OSS_MODULE_INSTALL_PATH = $(OUTPUT_DIR)/mw_$(SDK_VER)/cvitek_mw_sdk
+-OSS_MODULE_INCLUDE_PATH = $(OSS_MODULE_INSTALL_PATH)/include
+-OSS_MODULE_LIB_PATH = $(OSS_MODULE_INSTALL_PATH)/lib
++OSS_MODULE_INCLUDE_PATH = $(STAGING_DIR)/usr/include
++OSS_MODULE_LIB_PATH = $(STAGING_DIR)/usr/lib
+ 
+ ISP_BIN_DIR = $(MW_PATH)/modules/isp/$(shell echo $(CHIP_ARCH) | tr A-Z a-z)/isp_bin/inc
+ 
+@@ -45,25 +45,25 @@ OSS_MODULE_LIB_CVI_MINIZ_CHECK_PATH = $(OSS_MODULE_LIB_PATH)/libcvi_miniz*
+ 
+ prepare_3rdparty_module:
+ # cvi_json-c
+-ifeq "$(wildcard $(OSS_MODULE_LIB_CVI_JSONC_CHECK_PATH))" ""
+-ifeq "$(wildcard $(OSS_TARBALL_CVI_JSONC_PATH))" ""
+-	$(error libcvi_json-c source tarball not exist, please run build_3rd_party first!!)
+-endif
+-	@mkdir -p $(OSS_MODULE_INSTALL_PATH)
+-	@$(OSS_BUILD_SRCIPT) -n cvi-json-c -e -t "$(OSS_TARBALL_PATH)" -i "$(OSS_MODULE_INSTALL_PATH)"
+-endif
++#ifeq "$(wildcard $(OSS_MODULE_LIB_CVI_JSONC_CHECK_PATH))" ""
++#ifeq "$(wildcard $(OSS_TARBALL_CVI_JSONC_PATH))" ""
++#	$(error libcvi_json-c source tarball not exist, please run build_3rd_party first!!)
++#endif
++#	@mkdir -p $(OSS_MODULE_INSTALL_PATH)
++#	@$(OSS_BUILD_SRCIPT) -n cvi-json-c -e -t "$(OSS_TARBALL_PATH)" -i "$(OSS_MODULE_INSTALL_PATH)"
++#endif
+ 
+ # cvi_miniz
+-ifeq "$(wildcard $(OSS_MODULE_LIB_CVI_MINIZ_CHECK_PATH))" ""
+-ifeq "$(wildcard $(OSS_TARBALL_CVI_MINIZ_PATH))" ""
+-	$(error libcvi_miniz source tarball not exist, please run build_3rd_party first!!)
+-endif
+-	@mkdir -p $(OSS_MODULE_INSTALL_PATH)
+-	@$(OSS_BUILD_SRCIPT) -n cvi-miniz -e -t "$(OSS_TARBALL_PATH)" -i "$(OSS_MODULE_INSTALL_PATH)"
+-endif
++#ifeq "$(wildcard $(OSS_MODULE_LIB_CVI_MINIZ_CHECK_PATH))" ""
++#ifeq "$(wildcard $(OSS_TARBALL_CVI_MINIZ_PATH))" ""
++#	$(error libcvi_miniz source tarball not exist, please run build_3rd_party first!!)
++#endif
++#	@mkdir -p $(OSS_MODULE_INSTALL_PATH)
++#	@$(OSS_BUILD_SRCIPT) -n cvi-miniz -e -t "$(OSS_TARBALL_PATH)" -i "$(OSS_MODULE_INSTALL_PATH)"
++#endif
+ 
+ $(SDIR)/%.o: $(SDIR)/%.c
+-	@$(CC) $(DEPFLAGS) $(CFLAGS) $(EXTRA_CFLAGS) -o $@ -c $<
++	$(CC) $(DEPFLAGS) $(CFLAGS) $(EXTRA_CFLAGS) -o $@ -c $<
+ 	@echo [$(notdir $(CC))] $(notdir $@)
+ 
+ $(SDIR)/%.o: $(SDIR)/%.S
+diff --git a/v2/modules/osdc/Makefile b/v2/modules/osdc/Makefile
+index 4c9bf35..971f773 100644
+--- a/v2/modules/osdc/Makefile
++++ b/v2/modules/osdc/Makefile
+@@ -18,14 +18,16 @@ TARGET_SO = $(MW_LIB)/libosdc.so
+ INCS = -I$(MW_INC) -I$(KERNEL_INC) -I$(OSDC_INC)
+ 
+ EXTRA_CFLAGS = $(INCS) -fpack-struct=8
+-EXTRA_CFLAGS += -DMMF_VERSION=\"$(shell git describe --always)\"
++#EXTRA_CFLAGS += -DMMF_VERSION=\"$(shell git describe --always)\"
++EXTRA_CFLAGS += -DMMF_VERSION=\"$(CVITEK_MIDDLEWARE_VERSION)\"
+ EXTRA_CFLAGS += -DSDK_VER=\"$(SDK_VER)\"
+ ifeq ($(SDK_VER), 32bit)
+ EXTRA_CFLAGS += -D_FILE_OFFSET_BITS=64
+ 
+ endif
+ EXTRA_CXXFLAGS = $(INCS) -fpack-struct=8
+-EXTRA_CXXFLAGS += -DMMF_VERSION=\"$(shell git describe --always)\"
++#EXTRA_CXXFLAGS += -DMMF_VERSION=\"$(shell git describe --always)\"
++EXTRA_CFLAGS += -DMMF_VERSION=\"$(CVITEK_MIDDLEWARE_VERSION)\"
+ EXTRA_CXXFLAGS += -DSDK_VER=\"$(SDK_VER)\"
+ ifeq ($(SDK_VER), 32bit)
+ EXTRA_CXXFLAGS += -D_FILE_OFFSET_BITS=64
+diff --git a/v2/modules/sys/Makefile b/v2/modules/sys/Makefile
+index 4f5b749..9846f69 100644
+--- a/v2/modules/sys/Makefile
++++ b/v2/modules/sys/Makefile
+@@ -29,7 +29,8 @@ TARGET_SO = $(MW_LIB)/libsys.so
+ INCS = -I$(MW_INC) -I$(KERNEL_INC) -I$(SYS_INC) -I$(VPU_INC)
+ 
+ EXTRA_CFLAGS = $(INCS) -fpack-struct=8
+-EXTRA_CFLAGS += -DMMF_VERSION=\"$(shell git describe --always)\"
++#EXTRA_CFLAGS += -DMMF_VERSION=\"$(shell git describe --always)\"
++EXTRA_CFLAGS += -DMMF_VERSION=\"$(CVITEK_MIDDLEWARE_VERSION)\"
+ EXTRA_CFLAGS += -DSDK_VER=\"$(SDK_VER)\"
+ ifeq ($(SDK_VER), 32bit)
+ EXTRA_CFLAGS += -D_FILE_OFFSET_BITS=64
+diff --git a/v2/modules/vdec/Makefile b/v2/modules/vdec/Makefile
+index 354a96d..3d8e14d 100644
+--- a/v2/modules/vdec/Makefile
++++ b/v2/modules/vdec/Makefile
+@@ -38,7 +38,5 @@ clean:
+ 
+ prepare:
+ 	@echo "SDK_VER = ${SDK_VER}"
+-	@head=`git rev-parse --verify --short HEAD`
+-	@date=`git show -s --format=%cd --date=short ${head}`
+ 
+ -include $(DEPS)
+diff --git a/v2/modules/venc/Makefile b/v2/modules/venc/Makefile
+index a8d8c40..f68dcd4 100644
+--- a/v2/modules/venc/Makefile
++++ b/v2/modules/venc/Makefile
+@@ -53,7 +53,5 @@ clean:
+ 
+ prepare:
+ 	@echo "SDK_VER = ${SDK_VER}"
+-	@head=`git rev-parse --verify --short HEAD`
+-	@date=`git show -s --format=%cd --date=short ${head}`
+ 
+ -include $(DEPS)
+diff --git a/v2/pkgconfig/cvi_common.pc b/v2/pkgconfig/cvi_common.pc
+index 554d45d..453e480 100644
+--- a/v2/pkgconfig/cvi_common.pc
++++ b/v2/pkgconfig/cvi_common.pc
+@@ -6,4 +6,4 @@ Name: CVITEK System lib
+ Description: SYS / VPU / ISP / VENC / BIN libs
+ Version: 2.0
+ Cflags: -I${includedir} -I${includedir}/isp/cv181x
+-Libs: -L${libdir} -lsys -lvpu -lvenc -lcvi_bin -lcvi_bin_isp -lisp -lisp_algo -lae -laf -lawb -lsns_full -latomic
++Libs: -L${libdir} -lsys -lvpu -lvenc -lcvi_bin -lcvi_bin_isp -lisp -lisp_algo -lae -laf -lawb -lsns_full -latomic -ltinyalsa
+diff --git a/v2/sample/sample.mk b/v2/sample/sample.mk
+index 33ea2df..1ac3db2 100644
+--- a/v2/sample/sample.mk
++++ b/v2/sample/sample.mk
+@@ -13,9 +13,9 @@ ifeq ($(DEBUG), 1)
+ CFLAGS += -g -O0
+ endif
+ 
+-ifeq ($(SAMPLE_STATIC), 1)
+-ELFFLAGS += -static
+-endif
++#ifeq ($(SAMPLE_STATIC), 1)
++#ELFFLAGS += -static
++#endif
+ 
+ #########################################################################
+ COMM_SRC := $(wildcard $(COMMON_DIR)/*.c)
+-- 
+2.44.0
+

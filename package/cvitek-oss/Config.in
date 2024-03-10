@@ -1,0 +1,5 @@
+config BR2_PACKAGE_CVITEK_OSS
+    bool "CVITEK OSS package"
+    help
+      CVITEK OSS Applications
+      

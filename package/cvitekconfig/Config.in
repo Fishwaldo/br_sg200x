@@ -158,6 +158,10 @@ if BR2_PACKAGE_CVITEKCONFIG_BOARD_LICHEERVNANO
 		string
 		default "sg2002"
 
+	config BR2_PACKAGE_CVITEKCONFIG_CHIPCODE
+		string
+		default "mars"
+
 	config BR2_PACKAGE_CVITEKCONFIG_CHIP_ARCH
 		string
 		default "sg200x"
@@ -174,6 +178,13 @@ if BR2_PACKAGE_CVITEKCONFIG_BOARD_LICHEERVNANO
 		string
 		default "sd"
 
+	config BR2_PACKAGE_CVITEKCONFIG_CHIPCODE
+		string
+		default mars
+
+	config BR2_PACKAGE_CVITEKCONFIG_LIBC
+		string
+		default "musl"
 
 endif
 

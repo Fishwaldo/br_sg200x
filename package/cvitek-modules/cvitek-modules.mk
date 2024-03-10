@@ -1,14 +1,15 @@
 ################################################################################
 #
-# blwnet_xram
+# cvitek-modules
 #
 ################################################################################
 
 CVITEK_MODULES_VERSION = 5637fbf
 CVITEK_MODULES_SITE = $(call github,sophgo,osdrv,$(CVITEK_MODULES_VERSION))
 CVITEK_MODULES_LICENSE = GPL-2.0(kernel driver), Apache 2.0(userspace)
+CVITEK_MODULES_INSTALL_STAGING = YES
 
-CVITEK_MODULES_MODULE_MAKE_OPTS = CHIP_CODE=mars V=1
+CVITEK_MODULES_MODULE_MAKE_OPTS = CHIP_CODE=$(BR2_PACKAGE_CVITEKCONFIG_CHIPCODE)
 
 CVITEK_MODULES_MODULE_SUBDIRS = interdrv/v2/sys 
 CVITEK_MODULES_MODULE_SUBDIRS += interdrv/v2/base 
@@ -47,6 +48,11 @@ CVITEK_MODULES_MODULE_SUBDIRS += extdrv/wiegand-gpio
 #CVITEK_MODULES_MODULE_SUBDIRS += extdrv/wireless/realtek/rtl8821cs
 CVITEK_MODULES_MODULE_SUBDIRS += extdrv/wireless/aic8800/
 
+define CVITEK_MODULES_INSTALL_STAGING_CMDS
+	$(INSTALL) -D -m 0644 $(@D)/interdrv/v2/include/common/uapi/linux/* $(LINUX_DIR)/usr/include/linux/
+	$(INSTALL) -D -m 0644 $(@D)/interdrv/v2/include/chip/$(BR2_PACKAGE_CVITEKCONFIG_CHIPCODE)/uapi/linux/* $(LINUX_DIR)/usr/include/linux
+	$(info Staging Directory = $(STAGING_DIR))
+endef
 
 
 $(eval $(kernel-module))
