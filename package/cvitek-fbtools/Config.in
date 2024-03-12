@@ -1,0 +1,4 @@
+config TARGET_PACKAGE_CVITEK_FBTOOLS
+        bool "FrameBuffer Tools for CVITEK"
+        help
+          Framebuffer Tools for CVITEK Boards

@@ -1,0 +1,30 @@
+#!/bin/sh
+${CVI_SHOPTS}
+
+case "$1" in
+  start)
+    if [ -e /mnt/system/ko/dwc2.ko ]
+    then
+        insmod /mnt/system/ko/dwc2.ko
+    fi
+    echo device > /proc/cviusb/otg_role
+    printf "Starting usbdev: "
+    /etc/run_usb.sh probe acm
+    /etc/run_usb.sh probe rndis
+    /etc/run_usb.sh start
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+  ;;
+  stop)
+    printf "Stopping usbdev: "
+    /etc/run_usb.sh stop
+    echo "OK"
+    sleep 1
+  ;;
+  restart)
+    printf "Restarting usbdev: "
+    /etc/run_usb.sh stop
+    sleep 1
+    /etc/run_usb.sh start
+    echo "OK"
+  ;;
+esac

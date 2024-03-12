@@ -1,0 +1,7 @@
+start 10.100.100.100
+end 10.100.100.200
+interface usb0
+pidfile /var/run/udhcpd.usb0.pid
+lease_file /var/lib/misc/udhcpd.usb0.leases
+option subnet 255.255.255.0
+option lease 864000

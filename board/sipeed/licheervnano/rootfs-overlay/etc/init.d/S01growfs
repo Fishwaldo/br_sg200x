@@ -7,7 +7,7 @@ start() {
 			return 1
 	fi
 	echo 'Resizing Rootfs'
-	growpart /dev/mmcblk0 2
+	parted -s /dev/mmcblk0 resizepart 2 100%
 	status=$?
 	if [ "$status" -eq 0 ]; then
 			echo "Partition Resized"

@@ -3,6 +3,8 @@ CVITEK_MIDDLEWARE_SITE =  $(call github,sophgo,middleware,$(CVITEK_MIDDLEWARE_VE
 CVITEK_MIDDLEWARE_LICENSE = GPL-3.0
 CVITEK_MIDDLEWARE_DEPENDENCIES = cvitek-modules miniz json-c tinyalsa cvitek-oss cvitekconfig
 CVITEK_MIDDLEWARE_INSTALL_STAGING = YES
+
+
 UCCHIPARCH = $(shell echo '$(BR2_PACKAGE_CVITEKCONFIG_CHIP_ARCH)' | tr '[:lower:]' '[:upper:]')
 
 CVITEK_MIDDLEWARE_MAKE_OPTS = \

@@ -1,0 +1,5 @@
+build for cvitek board:
+
+export CFLAGS="-mcpu=c906fdv -march=rv64imafdcv0p7xthead -mcmodel=medany -mabi=lp64d"
+export CC=riscv64-unknown-linux-musl-gcc
+make
