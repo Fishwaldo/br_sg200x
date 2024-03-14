@@ -6,6 +6,7 @@
 
 #include <dt-bindings/input/linux-event-codes.h>
 #include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/leds/common.h>
 
 &i2c0 {
         status = "disabled";
@@ -157,4 +158,14 @@
                 i2c-gpio,delay-us = <5>;
                 status = "disabled";
         };
+
+        leds {
+        	compatible = "gpio-leds";
+	        led0 {
+		        gpios = <&porta 14 GPIO_ACTIVE_LOW>;
+		        linux,default-trigger = "heartbeat";
+		        function = LED_FUNCTION_HEARTBEAT;
+	        };
+        };
 };
+

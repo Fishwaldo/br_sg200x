@@ -2,6 +2,9 @@
 
 
 start() {
+	#temporary here to set led pin to GPIOA14
+	devmem 0x03001038 032 3
+
 	if [ -f "/.growfsran" ]; then
 			echo "Root Partition Already resized"
 			return 1

@@ -1,0 +1,5 @@
+
+config TARGET_PACKAGE_CVITEK_PINMUX
+        bool "PinMux"
+        help
+          cvitek PinMux utility

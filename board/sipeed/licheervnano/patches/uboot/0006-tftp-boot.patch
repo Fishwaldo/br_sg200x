@@ -1,0 +1,43 @@
+From 5c34f6fdda527b28d9b595441d6bf7da748dfd13 Mon Sep 17 00:00:00 2001
+From: Justin Hammond <justin@dynam.ac>
+Date: Thu, 14 Mar 2024 15:34:30 +0800
+Subject: [PATCH] tftp boot
+
+---
+ include/configs/mars-asic.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/include/configs/mars-asic.h b/include/configs/mars-asic.h
+index 12cdefac84..bd27512d4a 100644
+--- a/include/configs/mars-asic.h
++++ b/include/configs/mars-asic.h
+@@ -256,6 +256,7 @@
+ 		"sdboot=" SD_BOOTM_COMMAND "\0" \
+ 		"sdbootauto=" SD_BOOTM_COMMAND_AUTO "\0" \
+ 		"othbootargs=" OTHERBOOTARGS "\0" \
++		"boottftp=" TFTP_BOOT_COMMAND "\0" \
+ 		PARTS_OFFSET
+ 
+ /********************************************************************************/
+@@ -308,10 +309,17 @@
+ 					UBOOT_VBOOT_BOOTM_COMMAND \
+ 				"fi;"
+ 
++	#define TFTP_BOOT_COMMAND \
++				SET_BOOTARGS \
++				"echo Boot from ${serverip}...;" \
++				"tftpboot ${uImage_addr};"\
++				"if test $? -eq 0; then " \
++					UBOOT_VBOOT_BOOTM_COMMAND \
++				"fi;"
+ 	#ifdef CONFIG_ENABLE_ALIOS_UPDATE
+ 		#define CONFIG_BOOTCOMMAND	"cvi_update_rtos"
+ 	#elif CONFIG_SD_BOOT
+-		#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "run sdboot || run sdbootauto"
++		#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "run boottftp || run sdboot || run sdbootauto"
+ 	#else
+ 		#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "cvi_update || run norboot || run nandboot ||run emmcboot"
+ 	#endif
+-- 
+2.44.0
+
